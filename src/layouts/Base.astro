@@ -62,9 +62,6 @@ const { title, description, ogImage, personJsonLd, canonical } = Astro.props;
       canonical={canonical}
     />
 
-    <Analytics />
-    <SpeedInsights />
-
     <ViewTransitions />
   </head>
   <body class="flex min-h-dvh flex-col bg-bg text-fg">
@@ -74,5 +71,12 @@ const { title, description, ogImage, personJsonLd, canonical } = Astro.props;
     </main>
     <Footer />
     <ScrollReveal />
+
+    {
+      /* Vercel Analytics + Speed Insights at end of body so they don't
+        compete with first paint / LCP. */
+    }
+    <Analytics />
+    <SpeedInsights />
   </body>
 </html>

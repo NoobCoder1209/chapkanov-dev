@@ -33,7 +33,9 @@ export default defineConfig({
       },
     }),
     sitemap({
-      filter: (page) => !page.includes("/404") && !page.includes("/500"),
+      // Filter receives the full URL string. Match only the literal
+      // /404 and /500 routes, not deeper paths like /blog/404-tips.
+      filter: (page) => !/\/(?:404|500)\/?$/.test(page),
     }),
   ],
   vite: {

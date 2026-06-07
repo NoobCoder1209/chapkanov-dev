@@ -43,7 +43,11 @@ jobs:
           test -f dist/500.html
           test -f dist/contact/index.html
           test -f dist/now/index.html
-          for slug in claude-agent-starter devopscourse github-actions-templates helm-chart-template jenkins-docker-sonarqube k8s-pod-doctor markdown-rag mcp-server-sample terraform-aws-static-site; do
+          # Drive project-page checks from the source filesystem so adding
+          # a new MDX file under src/content/projects/ self-extends this
+          # gate without manual workflow edits.
+          for f in src/content/projects/*.mdx; do
+            slug=$(basename "$f" .mdx)
             test -f "dist/projects/$slug/index.html"
           done
           echo "All expected artifacts present."
