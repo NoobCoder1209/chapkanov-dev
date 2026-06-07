@@ -10,17 +10,20 @@ custom properties via `tailwind.config.mjs`.
 Monochrome neutrals + a single blue accent. Light is the default; `.dark`
 on `<html>` swaps to the dark variant.
 
-| Token               | Light     | Dark      | Use                           |
-| ------------------- | --------- | --------- | ----------------------------- |
-| `--color-bg`        | `#FAFAFA` | `#09090B` | Page background               |
-| `--color-fg`        | `#09090B` | `#FAFAFA` | Primary text                  |
-| `--color-muted`     | `#52525B` | `#A1A1AA` | Secondary text, captions      |
-| `--color-subtle`    | `#E4E4E7` | `#27272A` | Soft fills (chip bg, code bg) |
-| `--color-card`      | `#FFFFFF` | `#18181B` | Card surfaces, code blocks    |
-| `--color-border`    | `#E4E4E7` | `#27272A` | Hairline borders              |
-| `--color-accent`    | `#2563EB` | `#2563EB` | CTAs, links, focus rings      |
-| `--color-accent-fg` | `#FFFFFF` | `#FFFFFF` | Text/icons on accent          |
-| `--color-ring`      | `#2563EB` | `#2563EB` | `:focus-visible` outline      |
+| Token                    | Light     | Dark           | Use                             |
+| ------------------------ | --------- | -------------- | ------------------------------- |
+| `--color-bg`             | `#FAFAFA` | `#09090B`      | Page background                 |
+| `--color-fg`             | `#09090B` | `#FAFAFA`      | Primary text                    |
+| `--color-muted`          | `#52525B` | `#A1A1AA`      | Secondary text, captions        |
+| `--color-subtle`         | `#E4E4E7` | `#27272A`      | Soft fills (chip bg, code bg)   |
+| `--color-card`           | `#FFFFFF` | `#18181B`      | Card surfaces, code blocks      |
+| `--color-border`         | `#E4E4E7` | `#27272A`      | Hairline borders                |
+| `--color-accent`         | `#2563EB` | `#2563EB`      | CTAs, links, focus rings        |
+| `--color-accent-fg`      | `#FFFFFF` | `#FFFFFF`      | Text/icons on accent            |
+| `--color-ring`           | `#2563EB` | `#2563EB`      | `:focus-visible` outline        |
+| `--color-warning-bg`     | `#FFFBEB` | `amber-900/30` | Learning-notes badge background |
+| `--color-warning-fg`     | `#92400E` | `#FDE68A`      | Learning-notes badge text       |
+| `--color-warning-border` | `#FDE68A` | `amber-700/40` | Learning-notes badge ring       |
 
 Contrast: every text/background pair clears WCAG AA 4.5:1 in both themes.
 The `text-muted` on `bg-bg` pair sits at 4.61:1 light / 4.75:1 dark.

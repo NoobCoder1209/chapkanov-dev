@@ -1,5 +1,10 @@
 ---
 import Base from "../layouts/Base.astro";
+
+/* Static-site /500 — the route exists but only renders if the host is
+   configured to serve it as the 5xx error page (Vercel: rewrites in
+   `vercel.json`, wired up in Phase 4). Without that, this page is
+   reachable directly at /500 but won't be served on real errors. */
 ---
 
 <Base

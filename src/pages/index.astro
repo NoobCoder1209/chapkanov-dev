@@ -6,9 +6,10 @@ import ProjectGrid from "../components/ProjectGrid.astro";
 import Reveal from "../components/Reveal.astro";
 import { getCollection } from "astro:content";
 
-// Pull pinned + non-draft projects. Phase 3 fills the collection.
-// Until then, this returns an empty array and ProjectGrid renders its
-// empty state — the four-state contract is exercised even pre-content.
+// Pull pinned projects, hiding only `draft` and `private`. Public AND
+// learning-notes are both visible — learning-notes only changes the badge,
+// not the visibility. Phase 3 fills the collection; until then this
+// returns [] and ProjectGrid renders its empty-state CTA.
 const allProjects = await getCollection(
   "projects",
   ({ data }) => data.pinned && data.status !== "draft" && data.status !== "private",

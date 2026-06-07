@@ -14,6 +14,9 @@ export default {
         accent: "var(--color-accent)",
         "accent-fg": "var(--color-accent-fg)",
         ring: "var(--color-ring)",
+        "warning-bg": "var(--color-warning-bg)",
+        "warning-fg": "var(--color-warning-fg)",
+        "warning-border": "var(--color-warning-border)",
       },
       fontFamily: {
         sans: ["var(--font-sans)"],

@@ -35,7 +35,15 @@ const CATEGORY_LABEL: Record<Category, string> = {
 const grouped = new Map<Category, CollectionEntry<"projects">[]>();
 for (const cat of CATEGORY_ORDER) grouped.set(cat, []);
 for (const e of [...entries].sort((a, b) => a.data.order - b.data.order)) {
-  grouped.get(e.data.category)?.push(e);
+  const bucket = grouped.get(e.data.category);
+  if (!bucket) {
+    // Schema enum drifted from CATEGORY_ORDER — fail loud instead of
+    // silently dropping the entry.
+    throw new Error(
+      `ProjectGrid: project "${e.slug}" has unknown category "${e.data.category}". Add it to CATEGORY_ORDER.`,
+    );
+  }
+  bucket.push(e);
 }
 const visibleGroups = CATEGORY_ORDER.filter((cat) => (grouped.get(cat)?.length ?? 0) > 0);
 
