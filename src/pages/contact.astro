@@ -1,8 +1,17 @@
 ---
 import Base from "../layouts/Base.astro";
 import Reveal from "../components/Reveal.astro";
-import IconLink from "../components/IconLink.astro";
-import MailtoLink from "../components/MailtoLink.astro";
+import { Icon } from "astro-icon/components";
+
+/* Each contact row is one big anchor (icon + label + handle text) so the
+   whole row is clickable. The Email row uses data-u/data-d attributes:
+   the static HTML shows "[at]" between user and domain, and a small
+   inline script swaps the placeholder for "@" + sets href on first
+   client render. Defeats naïve scrapers without breaking right-click /
+   keyboard / no-JS users (they see a readable address with [at]). */
+
+const EMAIL_USER = "alexchapkanov";
+const EMAIL_DOMAIN = "gmail.com";
 
 const externals = [
   {
@@ -42,23 +51,48 @@ const externals = [
 
     <Reveal class="mt-12" delayMs={60}>
       <ul class="grid gap-3 sm:max-w-md">
-        <li class="flex items-center gap-4 rounded-lg border border-border bg-card p-4">
-          <MailtoLink user="alexchapkanov" domain="gmail.com" label="Email" />
-          <div class="min-w-0 flex-1">
-            <p class="text-sm font-medium text-fg">Email</p>
-            <p class="truncate font-mono text-sm text-muted">
-              alexchapkanov<span aria-hidden="true">&#64;</span>gmail.com
-            </p>
-          </div>
+        <li>
+          <a
+            id="contact-email"
+            href={`mailto:${EMAIL_USER}-DOTAT-${EMAIL_DOMAIN}`}
+            data-u={EMAIL_USER}
+            data-d={EMAIL_DOMAIN}
+            aria-label="Email"
+            class="contact-row hover:border-accent/50 group flex items-center gap-4 rounded-lg border border-border bg-card p-4 transition-colors duration-fast ease-out hover:bg-subtle"
+          >
+            <span
+              class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-muted group-hover:text-fg"
+            >
+              <Icon name="lucide:mail" class="h-5 w-5" aria-hidden="true" />
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-sm font-medium text-fg">Email</span>
+              <span class="block truncate font-mono text-sm text-muted">
+                <span data-email-u>{EMAIL_USER}</span><span data-email-sep>[at]</span><span
+                  data-email-d>{EMAIL_DOMAIN}</span
+                >
+              </span>
+            </span>
+          </a>
         </li>
         {
           externals.map((s) => (
-            <li class="flex items-center gap-4 rounded-lg border border-border bg-card p-4">
-              <IconLink href={s.href} icon={s.icon} label={s.label} external />
-              <div class="min-w-0 flex-1">
-                <p class="text-sm font-medium text-fg">{s.label}</p>
-                <p class="truncate text-sm text-muted">{s.text}</p>
-              </div>
+            <li>
+              <a
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.label}
+                class="contact-row hover:border-accent/50 group flex items-center gap-4 rounded-lg border border-border bg-card p-4 transition-colors duration-fast ease-out hover:bg-subtle"
+              >
+                <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-muted group-hover:text-fg">
+                  <Icon name={`lucide:${s.icon}`} class="h-5 w-5" aria-hidden="true" />
+                </span>
+                <span class="min-w-0 flex-1">
+                  <span class="block text-sm font-medium text-fg">{s.label}</span>
+                  <span class="block truncate text-sm text-muted">{s.text}</span>
+                </span>
+              </a>
             </li>
           ))
         }
@@ -66,3 +100,21 @@ const externals = [
     </Reveal>
   </section>
 </Base>
+
+<script>
+  /* Email reveal — runs only with JS enabled. Reads data-u / data-d off
+     the contact-email anchor, sets a real mailto: href, and replaces the
+     "[at]" separator span text with "@". */
+  const wire = () => {
+    const a = document.getElementById("contact-email") as HTMLAnchorElement | null;
+    if (!a) return;
+    const u = a.dataset["u"];
+    const d = a.dataset["d"];
+    if (!u || !d) return;
+    a.href = `mailto:${u}@${d}`;
+    const sep = a.querySelector("[data-email-sep]");
+    if (sep) sep.textContent = "@";
+  };
+  wire();
+  document.addEventListener("astro:after-swap", wire);
+</script>
