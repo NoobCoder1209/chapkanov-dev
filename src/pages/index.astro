@@ -28,7 +28,11 @@ import Base from "../layouts/Base.astro";
     const btn = document.getElementById("probe-toggle");
     btn?.addEventListener("click", () => {
       const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
-      localStorage.setItem("theme", next);
+      try {
+        localStorage.setItem("theme", next);
+      } catch {
+        // private mode / blocked storage — runtime toggle still works for this session
+      }
       document.documentElement.classList.toggle("dark", next === "dark");
       document.documentElement.style.colorScheme = next;
     });

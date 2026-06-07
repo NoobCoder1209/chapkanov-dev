@@ -2,3 +2,13 @@ allowBuilds:
   esbuild: true
   sharp: true
 autoInstallPeers: true
+peerDependencyRules:
+  ignoreMissing:
+    - next
+    - react
+    - react-dom
+    - svelte
+    - vue
+    - vue-router
+    - "@sveltejs/kit"
+    - "@remix-run/react"

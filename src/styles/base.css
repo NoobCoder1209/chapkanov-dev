@@ -3,14 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fontsource Geist variants register family names "Geist Variable" and
-   "Geist Mono Variable" via @font-face. Override our token aliases
-   here so Tailwind's font-sans / font-mono pick them up. */
-:root {
-  --font-sans: "Geist Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-
 html {
   background-color: var(--color-bg);
   color: var(--color-fg);

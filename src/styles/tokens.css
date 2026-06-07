@@ -12,8 +12,8 @@
   --color-accent-fg: #ffffff;
   --color-ring: #2563eb;
 
-  --font-sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: "Geist Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --fs-xs: 0.75rem;
   --fs-sm: 0.875rem;
