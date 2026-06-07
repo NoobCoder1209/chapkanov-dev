@@ -1,0 +1,139 @@
+---
+import { Icon } from "astro-icon/components";
+
+/**
+ * ThemeToggle — three-state toggle (light → dark → system) wired to the
+ * pre-paint theme script in Base.astro. Persists via localStorage["theme"]
+ * (values: "light", "dark", or absent meaning "system"). Re-syncs after
+ * Astro view-transition swaps.
+ */
+---
+
+<button
+  type="button"
+  id="theme-toggle"
+  data-tooltip="Toggle theme"
+  aria-label="Toggle color theme"
+  class="theme-toggle inline-flex h-10 w-10 items-center justify-center rounded-md text-muted transition-colors duration-fast ease-out hover:bg-subtle hover:text-fg"
+>
+  <Icon name="lucide:sun" class="theme-toggle-sun h-5 w-5" aria-hidden="true" />
+  <Icon name="lucide:moon" class="theme-toggle-moon h-5 w-5" aria-hidden="true" />
+  <Icon name="lucide:monitor" class="theme-toggle-system h-5 w-5" aria-hidden="true" />
+  <span class="sr-only" aria-live="polite" data-theme-status>Theme: system</span>
+</button>
+
+<style>
+  .theme-toggle {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+  }
+  .theme-toggle[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-2px);
+    padding: 4px 8px;
+    font-size: var(--fs-xs);
+    line-height: 1;
+    white-space: nowrap;
+    background: var(--color-fg);
+    color: var(--color-bg);
+    border-radius: var(--radius-sm);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity var(--motion-fast) var(--ease-out),
+      transform var(--motion-fast) var(--ease-out);
+  }
+  .theme-toggle[data-tooltip]:hover::after,
+  .theme-toggle[data-tooltip]:focus-visible::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Show exactly one icon based on the current toggle mode (system / light / dark). */
+  .theme-toggle-sun,
+  .theme-toggle-moon,
+  .theme-toggle-system {
+    grid-area: 1 / 1;
+    transition:
+      opacity var(--motion-fast) var(--ease-out),
+      transform var(--motion-fast) var(--ease-out);
+  }
+  .theme-toggle[data-mode="system"] .theme-toggle-sun,
+  .theme-toggle[data-mode="system"] .theme-toggle-moon {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  .theme-toggle[data-mode="light"] .theme-toggle-moon,
+  .theme-toggle[data-mode="light"] .theme-toggle-system {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  .theme-toggle[data-mode="dark"] .theme-toggle-sun,
+  .theme-toggle[data-mode="dark"] .theme-toggle-system {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+</style>
+
+<script>
+  const KEY = "theme";
+  type Mode = "system" | "light" | "dark";
+  const ROTATION: Mode[] = ["system", "light", "dark"];
+
+  const safeGet = (): Mode => {
+    try {
+      const v = localStorage.getItem(KEY);
+      if (v === "light" || v === "dark") return v;
+    } catch {
+      /* private mode / disabled storage */
+    }
+    return "system";
+  };
+
+  const safeSet = (mode: Mode) => {
+    try {
+      if (mode === "system") localStorage.removeItem(KEY);
+      else localStorage.setItem(KEY, mode);
+    } catch {
+      /* swallow — runtime toggle still works for this session */
+    }
+  };
+
+  const apply = (mode: Mode) => {
+    const isDark =
+      mode === "dark" ||
+      (mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    document.documentElement.classList.toggle("dark", isDark);
+    document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+  };
+
+  const sync = () => {
+    const btn = document.getElementById("theme-toggle");
+    if (!btn) return;
+    const mode = safeGet();
+    btn.setAttribute("data-mode", mode);
+    const status = btn.querySelector<HTMLSpanElement>("[data-theme-status]");
+    if (status) status.textContent = `Theme: ${mode}`;
+  };
+
+  const onClick = () => {
+    const current = safeGet();
+    const next = ROTATION[(ROTATION.indexOf(current) + 1) % ROTATION.length];
+    safeSet(next);
+    apply(next);
+    sync();
+  };
+
+  const wire = () => {
+    sync();
+    const btn = document.getElementById("theme-toggle");
+    btn?.addEventListener("click", onClick);
+  };
+
+  wire();
+  document.addEventListener("astro:after-swap", wire);
+</script>
