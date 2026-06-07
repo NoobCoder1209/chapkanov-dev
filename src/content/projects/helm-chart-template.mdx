@@ -1,0 +1,29 @@
+---
+title: helm-chart-template
+pitch: Production-shaped Helm chart starter for stateless HTTP services — probes, HPA, PDB, NetworkPolicy, ExternalSecrets, schema validation, kind smoke test.
+repo: https://github.com/NoobCoder1209/helm-chart-template
+category: devops
+order: 2
+pinned: true
+status: public
+skills:
+  - Kubernetes platform engineering
+  - Helm chart authoring
+  - Schema validation
+  - Production-ready defaults
+techStack:
+  - Helm
+  - Kubernetes
+  - YAML
+  - kind
+  - GitHub Actions
+  - ExternalSecrets
+---
+
+A starter chart that already has the boring stuff right: liveness and readiness
+probes that match real workloads, sane HPA limits, a PodDisruptionBudget, a
+NetworkPolicy that defaults to deny, ExternalSecrets-friendly secret wiring,
+and a JSON schema that catches bad values before `helm template` runs.
+
+CI smoke-tests every change against a local `kind` cluster, so the chart never
+ships broken.

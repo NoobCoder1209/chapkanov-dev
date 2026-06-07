@@ -1,0 +1,28 @@
+---
+title: markdown-rag
+pitch: Local RAG over a folder of markdown files using Qdrant + Anthropic Claude. One command from cold cache to streamed answer.
+repo: https://github.com/NoobCoder1209/markdown-rag
+category: ai
+order: 6
+pinned: true
+status: public
+skills:
+  - Retrieval-augmented generation
+  - Vector search
+  - Embedding pipelines
+  - Local-first AI tooling
+techStack:
+  - Python
+  - Qdrant
+  - anthropic (Python SDK)
+  - Docker
+  - Sentence Transformers
+---
+
+Point it at a folder of markdown, run one command, ask a question. The answer
+streams back with citations to the source files and chunks.
+
+The whole thing runs locally: Qdrant in Docker for the vector store, a small
+embedder to chunk + embed, and Claude on top to answer over the retrieved
+context. No SaaS dependency beyond the LLM call itself, which makes it cheap
+to iterate on the prompt and the chunking strategy.

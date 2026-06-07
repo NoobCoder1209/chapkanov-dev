@@ -1,0 +1,27 @@
+---
+title: mcp-server-sample
+pitch: A minimal Model Context Protocol server in TypeScript wrapping a free public API. Drop-in ready for Claude Desktop.
+repo: https://github.com/NoobCoder1209/mcp-server-sample
+category: ai
+order: 7
+pinned: true
+status: public
+skills:
+  - MCP server design
+  - Tool schema authoring
+  - Stdio transport
+  - SDK integration
+techStack:
+  - TypeScript
+  - "@modelcontextprotocol/sdk"
+  - Node.js
+  - Zod
+---
+
+A starter MCP server you can clone, point at any free public API, and have
+Claude Desktop calling it within minutes. Stdio transport, two tools wired up
+correctly with Zod-typed inputs, error handling that surfaces useful messages
+back to the model, and a config snippet for `claude_desktop_config.json`.
+
+MCP is moving fast — this repo tracks the latest stable SDK shape and
+re-pins versions when something breaks.

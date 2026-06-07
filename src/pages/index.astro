@@ -3,40 +3,33 @@ import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero.astro";
 import Bio from "../components/Bio.astro";
 import ProjectGrid from "../components/ProjectGrid.astro";
-import Reveal from "../components/Reveal.astro";
 import { getCollection } from "astro:content";
 
 // Pull pinned projects, hiding only `draft` and `private`. Public AND
 // learning-notes are both visible — learning-notes only changes the badge,
-// not the visibility. Phase 3 fills the collection; until then this
-// returns [] and ProjectGrid renders its empty-state CTA.
+// not the visibility.
 const allProjects = await getCollection(
   "projects",
   ({ data }) => data.pinned && data.status !== "draft" && data.status !== "private",
 );
 
-// Phase 3 picks one of three drafts; placeholder draft #1 in the meantime.
 const bioParagraphs = [
-  "I'm an SRE who likes shipping things — Kubernetes operators, AI-powered tools, the occasional production fire.",
-  "Most of my day job is platform engineering: making other engineers' lives easier with reliable infrastructure, sane defaults, and the kind of tooling that fades into the background. Outside of that I build with Claude and AI agents — usually little CLIs and integrations that do one thing well.",
-  "Based in Sofia. Open to interesting freelance work via Upwork.",
+  "I'm an SRE who likes shipping things — Kubernetes operators, AI-powered tools, the occasional production fire. Day job is platform engineering at a large enterprise; I keep developer-facing tooling honest and resilient.",
+  "Outside of that I build with Claude and AI agents — usually little CLIs and integrations that do one thing well. The repos below are mine; the rest of the AI plumbing tends to live as private experiments until it has something to show.",
+  "Based in Sofia. Open to interesting freelance work via Upwork — usually Claude integrations, agent workflows, or the boring-but-correct DevOps you can't quite find a contractor for.",
 ];
 ---
 
 <Base title="chapkanov.dev — Aleksandar Chapkanov" personJsonLd>
-  <Reveal>
-    <Hero
-      eyebrow="Phase 2b · components"
-      title="Hi, I'm Aleksandar. I ship things."
-      subhead="SRE by day, building with Claude and AI agents the rest of the time."
-      primary={{ href: "#projects", label: "See projects" }}
-      secondary={{ href: "/contact", label: "Get in touch" }}
-    />
-  </Reveal>
+  <Hero
+    eyebrow="Sofia · SRE & AI apps"
+    title="Hi, I'm Aleksandar. I ship things."
+    subhead="SRE by day, building with Claude and AI agents the rest of the time."
+    primary={{ href: "#projects", label: "See projects" }}
+    secondary={{ href: "/contact", label: "Get in touch" }}
+  />
 
-  <Reveal delayMs={60}>
-    <Bio paragraphs={bioParagraphs} />
-  </Reveal>
+  <Bio paragraphs={bioParagraphs} />
 
   <div id="projects">
     <ProjectGrid entries={allProjects} />

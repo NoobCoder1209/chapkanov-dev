@@ -1,0 +1,32 @@
+---
+import Project from "../../layouts/Project.astro";
+import Prose from "../../components/Prose.astro";
+import { getCollection, type CollectionEntry } from "astro:content";
+
+export async function getStaticPaths() {
+  // Aligned with the homepage filter: hide both `draft` and `private`
+  // entries so a private project flipped via frontmatter doesn't leave
+  // an orphan detail page reachable by URL.
+  const entries = await getCollection(
+    "projects",
+    ({ data }) => data.status !== "draft" && data.status !== "private",
+  );
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<"projects">;
+}
+const props: Props = Astro.props;
+const { entry } = props;
+const { Content } = await entry.render();
+---
+
+<Project entry={entry}>
+  <Prose>
+    <Content />
+  </Prose>
+</Project>

@@ -1,18 +1,120 @@
 ---
 import Base from "../layouts/Base.astro";
 import Reveal from "../components/Reveal.astro";
+import { Icon } from "astro-icon/components";
+
+/* Each contact row is one big anchor (icon + label + handle text) so the
+   whole row is clickable. The Email row uses data-u/data-d attributes:
+   the static HTML shows "[at]" between user and domain, and a small
+   inline script swaps the placeholder for "@" + sets href on first
+   client render. Defeats naïve scrapers without breaking right-click /
+   keyboard / no-JS users (they see a readable address with [at]). */
+
+const EMAIL_USER = "alexchapkanov";
+const EMAIL_DOMAIN = "gmail.com";
+
+const externals = [
+  {
+    href: "https://github.com/NoobCoder1209",
+    icon: "github",
+    label: "GitHub",
+    text: "NoobCoder1209",
+  },
+  {
+    href: "https://www.linkedin.com/in/aleksandar-chapkanov/",
+    icon: "linkedin",
+    label: "LinkedIn",
+    text: "aleksandar-chapkanov",
+  },
+  {
+    href: "https://www.upwork.com/freelancers/~014a7c68489b5acdf8",
+    icon: "briefcase",
+    label: "Upwork",
+    text: "Open to freelance work",
+  },
+];
 ---
 
 <Base
   title="Contact — chapkanov.dev"
   description="Reach Aleksandar Chapkanov by email, GitHub, LinkedIn, or Upwork."
 >
-  <section class="container-page py-24">
+  <section class="container-page py-24 md:py-32">
     <Reveal>
-      <h1 class="text-4xl font-semibold tracking-tight md:text-5xl">Contact</h1>
-      <p class="mt-4 max-w-prose text-lg text-muted">
-        Real contact page lands in Phase 3. Footer icons already work.
+      <p class="font-mono text-sm uppercase tracking-widest text-muted">Contact</p>
+      <h1 class="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">Let's talk.</h1>
+      <p class="mt-6 max-w-prose text-lg text-muted">
+        Best way to reach me is email. I read everything; I don't always reply the same day. For
+        paid work, Upwork is the cleanest route.
       </p>
+    </Reveal>
+
+    <Reveal class="mt-12" delayMs={60}>
+      <ul class="grid gap-3 sm:max-w-md">
+        <li>
+          <a
+            id="contact-email"
+            href={`mailto:${EMAIL_USER}-DOTAT-${EMAIL_DOMAIN}`}
+            data-u={EMAIL_USER}
+            data-d={EMAIL_DOMAIN}
+            aria-label="Email"
+            class="contact-row hover:border-accent/50 group flex items-center gap-4 rounded-lg border border-border bg-card p-4 transition-colors duration-fast ease-out hover:bg-subtle"
+          >
+            <span
+              class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-muted group-hover:text-fg"
+            >
+              <Icon name="lucide:mail" class="h-5 w-5" aria-hidden="true" />
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-sm font-medium text-fg">Email</span>
+              <span class="block truncate font-mono text-sm text-muted">
+                <span data-email-u>{EMAIL_USER}</span><span data-email-sep>[at]</span><span
+                  data-email-d>{EMAIL_DOMAIN}</span
+                >
+              </span>
+            </span>
+          </a>
+        </li>
+        {
+          externals.map((s) => (
+            <li>
+              <a
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.label}
+                class="contact-row hover:border-accent/50 group flex items-center gap-4 rounded-lg border border-border bg-card p-4 transition-colors duration-fast ease-out hover:bg-subtle"
+              >
+                <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-muted group-hover:text-fg">
+                  <Icon name={`lucide:${s.icon}`} class="h-5 w-5" aria-hidden="true" />
+                </span>
+                <span class="min-w-0 flex-1">
+                  <span class="block text-sm font-medium text-fg">{s.label}</span>
+                  <span class="block truncate text-sm text-muted">{s.text}</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
     </Reveal>
   </section>
 </Base>
+
+<script>
+  /* Email reveal — runs only with JS enabled. Reads data-u / data-d off
+     the contact-email anchor, sets a real mailto: href, and replaces the
+     "[at]" separator span text with "@". */
+  const wire = () => {
+    const a = document.getElementById("contact-email") as HTMLAnchorElement | null;
+    if (!a) return;
+    const u = a.dataset["u"];
+    const d = a.dataset["d"];
+    if (!u || !d) return;
+    a.href = `mailto:${u}@${d}`;
+    const sep = a.querySelector("[data-email-sep]");
+    if (sep) sep.textContent = "@";
+  };
+  wire();
+  document.addEventListener("astro:after-swap", wire);
+</script>
