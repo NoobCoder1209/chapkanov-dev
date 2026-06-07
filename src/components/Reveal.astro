@@ -1,0 +1,27 @@
+---
+/**
+ * Reveal — wraps content that should fade-in + translate when it scrolls into view.
+ * Uses the global IntersectionObserver wired by <ScrollReveal />.
+ * Respects prefers-reduced-motion via the [data-reveal] CSS rule in base.css.
+ *
+ * Async-state contract for any list/fetch this wraps:
+ *   1. Loading — render a skeleton inside the slot
+ *   2. Empty   — render a friendly empty state inside the slot
+ *   3. Error   — render what / why / what-to-do inside the slot
+ *   4. Success — the actual content
+ * Reveal animates whichever state is currently in the slot.
+ */
+interface Props {
+  as?: keyof HTMLElementTagNameMap;
+  delayMs?: number;
+  class?: string;
+}
+
+const props: Props = Astro.props;
+const { as: Tag = "div", delayMs = 0, class: className = "" } = props;
+const style = delayMs > 0 ? `transition-delay:${delayMs}ms` : undefined;
+---
+
+<Tag data-reveal style={style} class={className}>
+  <slot />
+</Tag>

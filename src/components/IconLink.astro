@@ -1,0 +1,35 @@
+---
+import { Icon } from "astro-icon/components";
+
+/**
+ * IconLink — anchor with a Lucide icon and an accessible tooltip.
+ * Visible label (aria-label + CSS tooltip on hover/focus). Used in Footer + /contact.
+ *
+ * For external links, defaults to target=_blank + rel="noopener noreferrer".
+ */
+interface Props {
+  href: string;
+  icon: string; // lucide icon name (e.g. "github", "mail")
+  label: string;
+  external?: boolean;
+  class?: string;
+}
+
+const props: Props = Astro.props;
+const { href, icon, label, external, class: className = "" } = props;
+const isExternal = external ?? /^https?:/.test(href);
+const targetAttrs = isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {};
+---
+
+<a
+  href={href}
+  aria-label={label}
+  data-tooltip={label}
+  class:list={[
+    "tooltip-host inline-flex h-10 w-10 items-center justify-center rounded-md text-muted transition-colors duration-fast ease-out hover:bg-subtle hover:text-fg",
+    className,
+  ]}
+  {...targetAttrs}
+>
+  <Icon name={`lucide:${icon}`} class="h-5 w-5" aria-hidden="true" />
+</a>

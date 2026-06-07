@@ -1,0 +1,86 @@
+---
+import Base from "./Base.astro";
+import Reveal from "../components/Reveal.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  entry: CollectionEntry<"projects">;
+}
+
+const { entry } = Astro.props;
+const { title, pitch, repo, category, skills, techStack, screenshots, status, updated } =
+  entry.data;
+const updatedLabel = updated
+  ? new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(updated)
+  : null;
+---
+
+<Base title={`${title} — chapkanov.dev`} description={pitch} canonical={`/projects/${entry.slug}`}>
+  <article class="container-page py-16 md:py-24">
+    <Reveal>
+      <p class="font-mono text-xs uppercase tracking-widest text-muted">
+        {category}
+        {status === "learning-notes" ? "· Learning notes" : ""}
+      </p>
+      <h1 class="mt-3 text-4xl font-semibold tracking-tight md:text-5xl">{title}</h1>
+      <p class="mt-4 max-w-prose text-lg text-muted">{pitch}</p>
+
+      <div class="mt-6 flex flex-wrap items-center gap-4">
+        <a
+          href={repo}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-fg transition-colors duration-fast ease-out hover:opacity-90"
+        >
+          View on GitHub
+        </a>
+        {updatedLabel ? <span class="text-sm text-muted">Updated {updatedLabel}</span> : null}
+      </div>
+    </Reveal>
+
+    {
+      screenshots.length > 0 && (
+        <Reveal class="mt-12 grid gap-6 sm:grid-cols-2">
+          {screenshots.map((shot) => (
+            <figure class="overflow-hidden rounded-lg border border-border bg-card">
+              <img
+                src={shot.src}
+                alt={shot.alt}
+                width={shot.width}
+                height={shot.height}
+                loading="lazy"
+                decoding="async"
+                class="h-auto w-full"
+              />
+            </figure>
+          ))}
+        </Reveal>
+      )
+    }
+
+    <Reveal class="mt-12 grid gap-8 md:grid-cols-2" delayMs={50}>
+      <section>
+        <h2 class="font-mono text-sm uppercase tracking-widest text-muted">Skills</h2>
+        <ul class="mt-3 flex flex-wrap gap-2">
+          {skills.map((s) => <li class="rounded-md bg-subtle px-2.5 py-1 text-sm text-fg">{s}</li>)}
+        </ul>
+      </section>
+      <section>
+        <h2 class="font-mono text-sm uppercase tracking-widest text-muted">Tech stack</h2>
+        <ul class="mt-3 flex flex-wrap gap-2">
+          {
+            techStack.map((t) => (
+              <li class="rounded-md border border-border px-2.5 py-1 font-mono text-sm text-muted">
+                {t}
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </Reveal>
+
+    <Reveal class="prose prose-neutral dark:prose-invert mt-12 max-w-prose">
+      <slot />
+    </Reveal>
+  </article>
+</Base>

@@ -2,13 +2,21 @@
 import "@fontsource-variable/geist";
 import "@fontsource-variable/geist-mono";
 import "../styles/base.css";
+import { ViewTransitions } from "astro:transitions";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import ScrollReveal from "../components/ScrollReveal.astro";
+import Seo from "../components/Seo.astro";
 
 interface Props {
   title: string;
   description?: string;
+  ogImage?: string;
+  personJsonLd?: boolean;
+  canonical?: string | URL;
 }
 
-const { title, description = "Aleksandar Chapkanov — SRE & AI apps engineer." } = Astro.props;
+const { title, description, ogImage, personJsonLd, canonical } = Astro.props;
 ---
 
 <!doctype html>
@@ -16,11 +24,9 @@ const { title, description = "Aleksandar Chapkanov — SRE & AI apps engineer." 
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
 
-    {/* FOUC-free theme: runs before paint, sets `dark` class on <html>. */}
+    {/* FOUC-free pre-paint theme: runs before any content paints. */}
     <script is:inline>
       (() => {
         const KEY = "theme";
@@ -45,8 +51,23 @@ const { title, description = "Aleksandar Chapkanov — SRE & AI apps engineer." 
         });
       })();
     </script>
+
+    <Seo
+      title={title}
+      description={description}
+      ogImage={ogImage}
+      personJsonLd={personJsonLd}
+      canonical={canonical}
+    />
+
+    <ViewTransitions />
   </head>
-  <body class="bg-bg text-fg">
-    <slot />
+  <body class="flex min-h-dvh flex-col bg-bg text-fg">
+    <Header />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+    <ScrollReveal />
   </body>
 </html>

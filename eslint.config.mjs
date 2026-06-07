@@ -19,6 +19,16 @@ export default [
     },
   },
   {
+    // <script> blocks inside .astro components — parsed as TS by eslint-plugin-astro
+    files: ["**/*.astro/*.ts", "**/*.astro/*.js"],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        sourceType: "module",
+      },
+    },
+  },
+  {
     files: ["**/*.ts"],
     languageOptions: {
       parser: tseslint.parser,

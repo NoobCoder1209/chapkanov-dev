@@ -1,40 +1,28 @@
 ---
 import Base from "../layouts/Base.astro";
+import Reveal from "../components/Reveal.astro";
 ---
 
-<Base title="chapkanov.dev — bootstrap">
-  <main class="container-page py-24">
-    <h1 class="font-sans text-5xl font-semibold tracking-tight">Bootstrap OK</h1>
-    <p class="mt-4 max-w-prose text-lg text-muted">
-      Tokens, fonts, theme script, and Tailwind are wired. This is the Phase 1 verification page —
-      the real homepage lands in Phase 3.
-    </p>
-    <div class="mt-8 flex gap-4">
-      <button
-        id="probe-toggle"
-        type="button"
-        class="rounded-md bg-accent px-4 py-2 font-medium text-accent-fg transition-colors duration-fast ease-out hover:opacity-90"
-        aria-label="Toggle theme (probe)"
+<Base title="chapkanov.dev" personJsonLd>
+  <section class="container-page py-24 md:py-32">
+    <Reveal>
+      <p class="font-mono text-sm uppercase tracking-widest text-muted">Phase 2 shell</p>
+      <h1 class="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">
+        Hi, I'm Aleksandar. I ship things.
+      </h1>
+      <p class="mt-6 max-w-prose text-lg text-muted">
+        SRE by day, building with Claude and AI agents the rest of the time. The real homepage —
+        bio, project grid, contact CTA — lands in Phase 3. This page exists to verify the shell:
+        header, footer, theme toggle, view transitions, scroll reveal, and SEO metadata.
+      </p>
+    </Reveal>
+    <Reveal class="mt-12" delayMs={80}>
+      <a
+        href="/contact"
+        class="inline-flex items-center gap-2 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-fg transition-colors duration-fast ease-out hover:opacity-90"
       >
-        Toggle theme
-      </button>
-      <code class="rounded-md bg-subtle px-3 py-2 font-mono text-sm">
-        --color-bg / --color-fg / --color-accent
-      </code>
-    </div>
-  </main>
-
-  <script>
-    const btn = document.getElementById("probe-toggle");
-    btn?.addEventListener("click", () => {
-      const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
-      try {
-        localStorage.setItem("theme", next);
-      } catch {
-        // private mode / blocked storage — runtime toggle still works for this session
-      }
-      document.documentElement.classList.toggle("dark", next === "dark");
-      document.documentElement.style.colorScheme = next;
-    });
-  </script>
+        Probe a navigation (view-transition)
+      </a>
+    </Reveal>
+  </section>
 </Base>

@@ -1,0 +1,40 @@
+---
+/**
+ * ScrollReveal — singleton that wires a single IntersectionObserver to all
+ * [data-reveal] elements on the page. Drop one instance in the <body> of
+ * Base.astro. Re-runs on Astro view-transition swaps (re-uses the same observer).
+ *
+ * `prefers-reduced-motion` is checked live (read on every observe() call) so
+ * OS-level preference changes take effect on subsequent navigations. The CSS
+ * rule in base.css already forces [data-reveal] to its visible state for
+ * reduced-motion users — this script just skips the JS observe step.
+ *
+ * No props.
+ */
+---
+
+<script>
+  const ROOT_MARGIN = "0px 0px -10% 0px";
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          io.unobserve(entry.target);
+        }
+      }
+    },
+    { rootMargin: ROOT_MARGIN, threshold: 0.05 },
+  );
+
+  const observe = () => {
+    if (reducedMotion.matches) return;
+    const els = document.querySelectorAll<HTMLElement>("[data-reveal]:not(.is-visible)");
+    for (const el of els) io.observe(el);
+  };
+
+  observe();
+  document.addEventListener("astro:after-swap", observe);
+</script>

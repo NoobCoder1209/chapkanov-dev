@@ -1,0 +1,73 @@
+---
+/**
+ * Seo — single source of truth for per-page <head> metadata.
+ * Used by every layout via <Seo title="…" description="…" />.
+ *
+ * Emits: title, description, canonical, og + twitter card meta, json-ld Person.
+ * og:image defaults to /og-default.svg (placeholder); Phase 4 swaps in a 1200×630 PNG.
+ */
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  /** When true, emits Person json-ld (set on the homepage only). */
+  personJsonLd?: boolean;
+  /** Optional canonical override; defaults to current Astro.url. */
+  canonical?: string | URL;
+}
+
+const {
+  title,
+  description = "Aleksandar Chapkanov — SRE by day, building with Claude and AI agents the rest of the time.",
+  ogImage = "/og-default.svg",
+  personJsonLd = false,
+  canonical,
+} = Astro.props;
+
+if (!Astro.site) {
+  throw new Error("Seo.astro: Astro.site is not configured. Set `site:` in astro.config.mjs.");
+}
+const site = Astro.site;
+const canonicalUrl = new URL(canonical ?? Astro.url.pathname, site).href;
+const ogImageUrl = new URL(ogImage, site).href;
+
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Aleksandar Chapkanov",
+  url: site.href,
+  jobTitle: "Site Reliability Engineer",
+  sameAs: [
+    "https://github.com/NoobCoder1209",
+    "https://www.linkedin.com/in/aleksandar-chapkanov/",
+    "https://www.upwork.com/freelancers/~014a7c68489b5acdf8",
+  ],
+};
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={ogImageUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="en_US" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageUrl} />
+
+{
+  personJsonLd && (
+    /* JSON-LD payload built from static literals via JSON.stringify;
+       no user input flows into it, so set:html is safe here. */
+    /* eslint-disable-next-line astro/no-set-html-directive */
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(personSchema)} />
+  )
+}
