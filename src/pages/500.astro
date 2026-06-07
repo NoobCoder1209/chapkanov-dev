@@ -1,0 +1,31 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+  title="500 — Something went wrong · chapkanov.dev"
+  description="An unexpected error occurred."
+>
+  <section class="container-page py-32 text-center">
+    <p class="font-mono text-sm uppercase tracking-widest text-muted">500</p>
+    <h1 class="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">Something went wrong.</h1>
+    <p class="mx-auto mt-4 max-w-prose text-base text-muted">
+      An unexpected error happened on our end. Try refreshing — if the problem persists, please
+      reach out via the contact page.
+    </p>
+    <div class="mt-10 flex flex-wrap justify-center gap-3">
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-fg transition-colors duration-fast ease-out hover:opacity-90"
+      >
+        Back to home
+      </a>
+      <a
+        href="/contact"
+        class="inline-flex items-center gap-1 px-3 py-2.5 text-sm font-medium text-muted transition-colors duration-fast ease-out hover:text-fg"
+      >
+        Get in touch
+      </a>
+    </div>
+  </section>
+</Base>

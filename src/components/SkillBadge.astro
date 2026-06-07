@@ -1,0 +1,17 @@
+---
+/**
+ * SkillBadge — pill for the "Skills" section on a project page.
+ * Uses bg-subtle (theme-aware) for a soft chip feel.
+ */
+interface Props {
+  label: string;
+}
+const props: Props = Astro.props;
+const { label } = props;
+---
+
+<span
+  class="inline-flex items-center rounded-md bg-subtle px-2.5 py-1 text-sm text-fg transition-colors duration-fast ease-out"
+>
+  {label}
+</span>

@@ -1,0 +1,21 @@
+---
+/**
+ * Bio — short paragraphs about Aleksandar. Accepts an array of paragraph
+ * strings (frontmatter-friendly). Real copy lives in /index.astro per the
+ * 3-draft pickup convention.
+ */
+interface Props {
+  paragraphs: string[];
+}
+const props: Props = Astro.props;
+const { paragraphs } = props;
+---
+
+<section class="container-page py-16 md:py-24">
+  <div class="grid gap-8 md:grid-cols-[180px_1fr] md:gap-12">
+    <h2 class="font-mono text-xs uppercase tracking-widest text-muted md:pt-2">About</h2>
+    <div class="max-w-prose space-y-4 text-base leading-relaxed text-fg md:text-lg">
+      {paragraphs.map((p) => <p>{p}</p>)}
+    </div>
+  </div>
+</section>

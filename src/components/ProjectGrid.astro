@@ -1,0 +1,91 @@
+---
+import ProjectCard from "./ProjectCard.astro";
+import Reveal from "./Reveal.astro";
+import type { CollectionEntry } from "astro:content";
+
+/**
+ * ProjectGrid — groups visible projects by category and renders a heading +
+ * card grid per group. Implements the four-state contract:
+ *
+ *   1. Loading — n/a (static at build time)
+ *   2. Empty   — friendly empty state with a single contact CTA
+ *   3. Error   — n/a (Astro fails the build on collection errors;
+ *                a runtime error state would only matter for SSR)
+ *   4. Success — the actual category sections
+ *
+ * Order is enforced via the `order` field in each project's frontmatter
+ * AND the explicit CATEGORY_ORDER below.
+ */
+interface Props {
+  entries: CollectionEntry<"projects">[];
+}
+const props: Props = Astro.props;
+const { entries } = props;
+
+type Category = CollectionEntry<"projects">["data"]["category"];
+
+const CATEGORY_ORDER: Category[] = ["devops", "ai", "terraform", "learning"];
+const CATEGORY_LABEL: Record<Category, string> = {
+  devops: "DevOps",
+  ai: "AI",
+  terraform: "Terraform",
+  learning: "Learning notes",
+};
+
+const grouped = new Map<Category, CollectionEntry<"projects">[]>();
+for (const cat of CATEGORY_ORDER) grouped.set(cat, []);
+for (const e of [...entries].sort((a, b) => a.data.order - b.data.order)) {
+  grouped.get(e.data.category)?.push(e);
+}
+const visibleGroups = CATEGORY_ORDER.filter((cat) => (grouped.get(cat)?.length ?? 0) > 0);
+
+const isEmpty = entries.length === 0;
+---
+
+<section class="container-page py-16 md:py-24">
+  <div class="flex items-baseline justify-between gap-4">
+    <h2 class="text-3xl font-semibold tracking-tight md:text-4xl">Projects</h2>
+    {
+      !isEmpty && (
+        <p class="font-mono text-xs uppercase tracking-widest text-muted">
+          {entries.length} pinned
+        </p>
+      )
+    }
+  </div>
+
+  {
+    isEmpty ? (
+      <Reveal class="mt-12 rounded-lg border border-dashed border-border bg-card px-6 py-16 text-center">
+        <p class="text-lg font-medium text-fg">Projects will appear here soon.</p>
+        <p class="mt-2 text-sm text-muted">
+          Each card maps to a public repo on GitHub. While they're being built, feel free to reach
+          out directly.
+        </p>
+        <a
+          href="/contact"
+          class="mt-6 inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-fg transition-colors duration-fast ease-out hover:opacity-90"
+        >
+          Get in touch
+        </a>
+      </Reveal>
+    ) : (
+      <div class="mt-10 space-y-12">
+        {visibleGroups.map((cat, groupIdx) => (
+          <div>
+            <h3 class="font-mono text-xs uppercase tracking-widest text-muted">
+              {CATEGORY_LABEL[cat]}
+            </h3>
+            <div class="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {grouped.get(cat)?.map((entry, i) => (
+                <Reveal delayMs={(groupIdx * 3 + i) * 40}>
+                  <ProjectCard entry={entry} />
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
+</section>

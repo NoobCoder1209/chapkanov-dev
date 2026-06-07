@@ -1,0 +1,46 @@
+---
+/**
+ * StatusBadge — small visual marker for project card status.
+ * "public"           → no badge (default state)
+ * "private"          → "Private repo"
+ * "learning-notes"   → "Learning notes" (yellow accent)
+ * "draft"            → "Draft"
+ */
+interface Props {
+  status: "public" | "private" | "learning-notes" | "draft";
+}
+const props: Props = Astro.props;
+const { status } = props;
+
+const VARIANT: Record<Props["status"], { label: string; className: string } | null> = {
+  public: null,
+  private: {
+    label: "Private repo",
+    className: "bg-subtle text-muted ring-1 ring-inset ring-border",
+  },
+  "learning-notes": {
+    label: "Learning notes",
+    className:
+      "bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-200 dark:bg-amber-900/30 dark:text-amber-200 dark:ring-amber-700/40",
+  },
+  draft: {
+    label: "Draft",
+    className: "bg-subtle text-muted ring-1 ring-inset ring-border",
+  },
+};
+
+const variant = VARIANT[status];
+---
+
+{
+  variant && (
+    <span
+      class:list={[
+        "inline-flex items-center rounded-md px-2 py-0.5 font-mono text-xs uppercase tracking-wider",
+        variant.className,
+      ]}
+    >
+      {variant.label}
+    </span>
+  )
+}
