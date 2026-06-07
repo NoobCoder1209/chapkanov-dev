@@ -1,0 +1,108 @@
+---
+import { Icon } from "astro-icon/components";
+import StatusBadge from "./StatusBadge.astro";
+import type { CollectionEntry } from "astro:content";
+
+/**
+ * ProjectCard — homepage card for a single project. The card title's <a>
+ * uses an ::after pseudo-element to expand its hit area to the entire card,
+ * making the whole surface clickable. The inner "View on GitHub" link sits
+ * on top via `relative z-10`, so its DOM-level click handler fires first
+ * — no JS stop-propagation needed.
+ *
+ * Keyboard focus follows DOM order (title link, then GitHub link), and a
+ * focus ring is drawn on the parent <article> via :has(a:focus-visible)
+ * so keyboard users see where focus lives even though the <a> itself is
+ * `outline-none`.
+ *
+ * Async-state contract:
+ *   - Loading: not applicable (cards render statically at build time)
+ *   - Empty:   handled at the grid level (see ProjectGrid)
+ *   - Error:   handled at the grid level
+ *   - Success: this component
+ */
+interface Props {
+  entry: CollectionEntry<"projects">;
+}
+const props: Props = Astro.props;
+const { entry } = props;
+const { title, pitch, repo, category, techStack, status, screenshots } = entry.data;
+const detailHref = `/projects/${entry.slug}`;
+const cover = screenshots[0];
+const TECH_VISIBLE = 4;
+const techVisible = techStack.slice(0, TECH_VISIBLE);
+const techMore = Math.max(0, techStack.length - TECH_VISIBLE);
+---
+
+<article
+  class="project-card hover:border-accent/50 group relative flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card transition-all duration-base ease-out hover:shadow-md"
+>
+  {
+    cover && (
+      <div class="aspect-[16/9] overflow-hidden bg-subtle">
+        <img
+          src={cover.src}
+          alt={cover.alt}
+          width={cover.width}
+          height={cover.height}
+          loading="lazy"
+          decoding="async"
+          class="h-full w-full object-cover transition-transform duration-slow ease-out group-hover:scale-[1.03]"
+        />
+      </div>
+    )
+  }
+
+  <div class="flex flex-1 flex-col gap-3 p-5">
+    <div class="flex items-start justify-between gap-3">
+      <p class="font-mono text-xs uppercase tracking-widest text-muted">
+        {category}
+      </p>
+      <StatusBadge status={status} />
+    </div>
+
+    <h3 class="text-xl font-semibold tracking-tight text-fg">
+      <a
+        href={detailHref}
+        class="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
+      >
+        {title}
+      </a>
+    </h3>
+
+    <p class="text-sm leading-relaxed text-muted">{pitch}</p>
+
+    <ul class="mt-auto flex flex-wrap gap-1.5 pt-2">
+      {
+        techVisible.map((t) => (
+          <li class="rounded-md border border-border px-1.5 py-0.5 font-mono text-xs text-muted">
+            {t}
+          </li>
+        ))
+      }
+      {techMore > 0 && <li class="px-1.5 py-0.5 font-mono text-xs text-muted">+{techMore} more</li>}
+    </ul>
+
+    <a
+      href={repo}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="relative z-10 inline-flex items-center gap-1 self-start text-xs font-medium text-muted transition-colors duration-fast ease-out hover:text-accent"
+      aria-label={`Open ${title} on GitHub (new tab)`}
+    >
+      <Icon name="lucide:github" class="h-3.5 w-3.5" aria-hidden="true" />
+      View on GitHub
+      <Icon name="lucide:arrow-up-right" class="h-3 w-3" aria-hidden="true" />
+    </a>
+  </div>
+</article>
+
+<style>
+  /* Whole-card focus ring for keyboard users — the inner <a> is outline:none
+     because its hit area is expanded via ::after, so we draw the ring on
+     the parent <article> when any descendant link has focus-visible. */
+  .project-card:has(a:focus-visible) {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+</style>

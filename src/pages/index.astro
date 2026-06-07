@@ -1,28 +1,44 @@
 ---
 import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import Bio from "../components/Bio.astro";
+import ProjectGrid from "../components/ProjectGrid.astro";
 import Reveal from "../components/Reveal.astro";
+import { getCollection } from "astro:content";
+
+// Pull pinned projects, hiding only `draft` and `private`. Public AND
+// learning-notes are both visible — learning-notes only changes the badge,
+// not the visibility. Phase 3 fills the collection; until then this
+// returns [] and ProjectGrid renders its empty-state CTA.
+const allProjects = await getCollection(
+  "projects",
+  ({ data }) => data.pinned && data.status !== "draft" && data.status !== "private",
+);
+
+// Phase 3 picks one of three drafts; placeholder draft #1 in the meantime.
+const bioParagraphs = [
+  "I'm an SRE who likes shipping things — Kubernetes operators, AI-powered tools, the occasional production fire.",
+  "Most of my day job is platform engineering: making other engineers' lives easier with reliable infrastructure, sane defaults, and the kind of tooling that fades into the background. Outside of that I build with Claude and AI agents — usually little CLIs and integrations that do one thing well.",
+  "Based in Sofia. Open to interesting freelance work via Upwork.",
+];
 ---
 
-<Base title="chapkanov.dev" personJsonLd>
-  <section class="container-page py-24 md:py-32">
-    <Reveal>
-      <p class="font-mono text-sm uppercase tracking-widest text-muted">Phase 2 shell</p>
-      <h1 class="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">
-        Hi, I'm Aleksandar. I ship things.
-      </h1>
-      <p class="mt-6 max-w-prose text-lg text-muted">
-        SRE by day, building with Claude and AI agents the rest of the time. The real homepage —
-        bio, project grid, contact CTA — lands in Phase 3. This page exists to verify the shell:
-        header, footer, theme toggle, view transitions, scroll reveal, and SEO metadata.
-      </p>
-    </Reveal>
-    <Reveal class="mt-12" delayMs={80}>
-      <a
-        href="/contact"
-        class="inline-flex items-center gap-2 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-fg transition-colors duration-fast ease-out hover:opacity-90"
-      >
-        Probe a navigation (view-transition)
-      </a>
-    </Reveal>
-  </section>
+<Base title="chapkanov.dev — Aleksandar Chapkanov" personJsonLd>
+  <Reveal>
+    <Hero
+      eyebrow="Phase 2b · components"
+      title="Hi, I'm Aleksandar. I ship things."
+      subhead="SRE by day, building with Claude and AI agents the rest of the time."
+      primary={{ href: "#projects", label: "See projects" }}
+      secondary={{ href: "/contact", label: "Get in touch" }}
+    />
+  </Reveal>
+
+  <Reveal delayMs={60}>
+    <Bio paragraphs={bioParagraphs} />
+  </Reveal>
+
+  <div id="projects">
+    <ProjectGrid entries={allProjects} />
+  </div>
 </Base>

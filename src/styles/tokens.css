@@ -12,6 +12,11 @@
   --color-accent-fg: #ffffff;
   --color-ring: #2563eb;
 
+  /* Warning palette — used by StatusBadge "learning-notes" variant. */
+  --color-warning-bg: #fffbeb;
+  --color-warning-fg: #92400e;
+  --color-warning-border: #fde68a;
+
   --font-sans: "Geist Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
 
@@ -58,6 +63,9 @@
   --color-border: #27272a;
   --color-accent: #2563eb;
   --color-accent-fg: #ffffff;
+  --color-warning-bg: rgb(120 53 15 / 0.3); /* amber-900/30 */
+  --color-warning-fg: #fde68a; /* amber-200 */
+  --color-warning-border: rgb(180 83 9 / 0.4); /* amber-700/40 */
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
   --shadow-md: 0 4px 12px rgb(0 0 0 / 0.5);
 }

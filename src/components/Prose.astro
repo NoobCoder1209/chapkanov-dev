@@ -1,0 +1,101 @@
+---
+/**
+ * Prose — typographic wrapper for MDX bodies (project pages, future blog).
+ * Uses scoped <style> with :global() so MDX-rendered children get styled
+ * without us having to install @tailwindcss/typography.
+ */
+interface Props {
+  class?: string;
+}
+const props: Props = Astro.props;
+const { class: className = "" } = props;
+---
+
+<div class:list={["prose-host max-w-prose", className]}>
+  <slot />
+</div>
+
+<style is:global>
+  .prose-host {
+    color: var(--color-fg);
+    font-size: var(--fs-base);
+    line-height: 1.7;
+  }
+  .prose-host h2 {
+    font-size: var(--fs-2xl);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-top: 2.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose-host h3 {
+    font-size: var(--fs-xl);
+    font-weight: 600;
+    margin-top: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+  .prose-host p {
+    margin-block: 1rem;
+  }
+  .prose-host a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: opacity var(--motion-fast) var(--ease-out);
+  }
+  .prose-host a:hover {
+    opacity: 0.8;
+  }
+  .prose-host ul,
+  .prose-host ol {
+    padding-left: 1.5rem;
+    margin-block: 1rem;
+  }
+  .prose-host ul {
+    list-style: disc;
+  }
+  .prose-host ol {
+    list-style: decimal;
+  }
+  .prose-host li {
+    margin-block: 0.25rem;
+  }
+  .prose-host code {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    background: var(--color-subtle);
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--radius-sm);
+  }
+  .prose-host pre {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    overflow-x: auto;
+    margin-block: 1.25rem;
+  }
+  .prose-host pre code {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    font-size: var(--fs-sm);
+  }
+  .prose-host blockquote {
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1rem;
+    margin-block: 1rem;
+    color: var(--color-muted);
+    font-style: italic;
+  }
+  .prose-host hr {
+    border: 0;
+    border-top: 1px solid var(--color-border);
+    margin-block: 2rem;
+  }
+  .prose-host strong {
+    color: var(--color-fg);
+    font-weight: 600;
+  }
+</style>

@@ -1,0 +1,59 @@
+---
+import { Icon } from "astro-icon/components";
+
+/**
+ * Hero — homepage hero block. Renders the hero tagline + subhead + CTA pair.
+ *
+ * Async-state contract: Hero is content-static. No loading/empty/error state
+ * applies — content comes from props at build time.
+ */
+interface Props {
+  /** Eyebrow line above the h1 (e.g. "AI apps & integration"). */
+  eyebrow?: string;
+  /** Main hero title — should contain the chosen tagline. */
+  title: string;
+  /** Sub-paragraph below the title. */
+  subhead: string;
+  /** Primary CTA. */
+  primary?: { href: string; label: string };
+  /** Secondary CTA (rendered as text link). */
+  secondary?: { href: string; label: string };
+}
+const props: Props = Astro.props;
+const { eyebrow, title, subhead, primary, secondary } = props;
+---
+
+<section class="container-page py-24 md:py-32">
+  {eyebrow && <p class="font-mono text-sm uppercase tracking-widest text-muted">{eyebrow}</p>}
+  <h1 class="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">
+    {title}
+  </h1>
+  <p class="mt-6 max-w-prose text-lg text-muted md:text-xl">
+    {subhead}
+  </p>
+
+  {
+    (primary || secondary) && (
+      <div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
+        {primary && (
+          <a
+            href={primary.href}
+            class="inline-flex items-center gap-2 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-fg transition-colors duration-fast ease-out hover:opacity-90"
+          >
+            {primary.label}
+            <Icon name="lucide:arrow-right" class="h-4 w-4" aria-hidden="true" />
+          </a>
+        )}
+        {secondary && (
+          <a
+            href={secondary.href}
+            class="inline-flex items-center gap-1 text-sm font-medium text-muted transition-colors duration-fast ease-out hover:text-fg"
+          >
+            {secondary.label}
+            <Icon name="lucide:arrow-right" class="h-4 w-4" aria-hidden="true" />
+          </a>
+        )}
+      </div>
+    )
+  }
+</section>
