@@ -4,8 +4,10 @@
  * [data-reveal] elements on the page. Drop one instance in the <body> of
  * Base.astro. Re-runs on Astro view-transition swaps (re-uses the same observer).
  *
- * Reduced-motion is read live (matchMedia listener + observer construction)
- * so OS-level preference changes take effect on subsequent navigations.
+ * `prefers-reduced-motion` is checked live (read on every observe() call) so
+ * OS-level preference changes take effect on subsequent navigations. The CSS
+ * rule in base.css already forces [data-reveal] to its visible state for
+ * reduced-motion users — this script just skips the JS observe step.
  *
  * No props.
  */
