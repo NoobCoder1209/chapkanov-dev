@@ -1,0 +1,36 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="chapkanov.dev — bootstrap">
+  <main class="container-page py-24">
+    <h1 class="font-sans text-5xl font-semibold tracking-tight">Bootstrap OK</h1>
+    <p class="mt-4 max-w-prose text-lg text-muted">
+      Tokens, fonts, theme script, and Tailwind are wired. This is the Phase 1 verification page —
+      the real homepage lands in Phase 3.
+    </p>
+    <div class="mt-8 flex gap-4">
+      <button
+        id="probe-toggle"
+        type="button"
+        class="rounded-md bg-accent px-4 py-2 font-medium text-accent-fg transition-colors duration-fast ease-out hover:opacity-90"
+        aria-label="Toggle theme (probe)"
+      >
+        Toggle theme
+      </button>
+      <code class="rounded-md bg-subtle px-3 py-2 font-mono text-sm">
+        --color-bg / --color-fg / --color-accent
+      </code>
+    </div>
+  </main>
+
+  <script>
+    const btn = document.getElementById("probe-toggle");
+    btn?.addEventListener("click", () => {
+      const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
+      localStorage.setItem("theme", next);
+      document.documentElement.classList.toggle("dark", next === "dark");
+      document.documentElement.style.colorScheme = next;
+    });
+  </script>
+</Base>

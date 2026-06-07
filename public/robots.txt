@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://chapkanov-dev.vercel.app/sitemap-index.xml

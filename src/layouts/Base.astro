@@ -1,0 +1,52 @@
+---
+import "@fontsource-variable/geist";
+import "@fontsource-variable/geist-mono";
+import "../styles/base.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Aleksandar Chapkanov — SRE & AI apps engineer." } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+
+    {/* FOUC-free theme: runs before paint, sets `dark` class on <html>. */}
+    <script is:inline>
+      (() => {
+        const KEY = "theme";
+        const get = () => {
+          try {
+            return localStorage.getItem(KEY);
+          } catch {
+            return null;
+          }
+        };
+        const apply = (theme) => {
+          const isDark =
+            theme === "dark" ||
+            (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.classList.toggle("dark", isDark);
+          document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+        };
+        apply(get());
+        document.addEventListener("astro:after-swap", () => apply(get()));
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+          if (!get()) apply(null);
+        });
+      })();
+    </script>
+  </head>
+  <body class="bg-bg text-fg">
+    <slot />
+  </body>
+</html>
