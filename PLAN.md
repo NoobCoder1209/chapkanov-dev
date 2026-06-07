@@ -73,6 +73,62 @@ links here.
 8. Deployed at `https://chapkanov-dev.vercel.app` initially. Custom domain later.
 9. Repo deployed-from-`main`.
 
+## Production hygiene (must apply, not optional)
+
+Inherits the master plan's "Production hygiene checklist." Repo-specific application:
+
+- **No secrets in repo.** No env vars needed for v1 (analytics needs none). If any are added later, `.env*` gitignored, `.env.example` placeholders only.
+- **Custom error screens.** Ship both `404.astro` and `500.astro`. Friendly tone, one CTA back to home. **Never expose stack traces or framework internals** to visitors.
+- **Error messages tell what / why / what to do.** Apply this rule to any user-visible error string in the site copy (404, contact-page errors if added later, blog post-not-found).
+
+## UX standards (must apply across the site)
+
+These are the design rules every page and component inherits.
+
+### Loading / async state policy
+
+- **< 1 second** — no spinner, no skeleton, just render. Spinners on instant content feel broken.
+- **1–5 seconds** — skeleton loaders (Tailwind `animate-pulse` blocks shaped like the eventual content). Plain spinners are weak; skeletons preview the layout.
+- **> 5 seconds** — skeleton + a small status text ("Loading projects…"). Rare on a static site, but document the rule.
+
+In a static Astro site most surfaces are instant, so this mostly applies to: image lazy-load (use `loading="lazy"` + skeleton placeholder), the project-grid first paint on slower connections, and any blog index that grows past a handful of posts.
+
+### Four-state rule for every async surface
+
+Every list, fetch, or async render must define all four:
+
+1. **Loading state** — skeleton, never blank
+2. **Empty state** — friendly, with one CTA (e.g. blog with no posts: "Posts coming soon — meanwhile, check out the projects.")
+3. **Error state** — what / why / what to do
+4. **Success state** — the actual content
+
+Document the four states in `src/components/` as TSX-style props comments so reviewers see the discipline.
+
+### Tooltips on icon-only buttons
+
+`ThemeToggle`, social-icon links in `Footer`, any icon button anywhere — must have an accessible tooltip (visual on hover/focus + `aria-label` for screen readers). Use a small headless-tooltip pattern or pure CSS `title` as fallback.
+
+### Image discipline
+
+Every `<img>` / `<Image />`:
+- Explicit `width` + `height` to prevent layout shift
+- Meaningful `alt` (or `alt=""` if decorative — be deliberate)
+- `loading="lazy"` for below-the-fold
+
+### Design tokens (style guide)
+
+Lock the design system in code, not in headers per file:
+
+- `src/styles/tokens.css` — CSS custom properties for colours, spacing, font sizes, radii, shadows. Light + dark variants.
+- `tailwind.config.mjs` — extend `theme.colors` etc. from those tokens so Tailwind utilities reference them.
+- `docs/design-system.md` — short reference page documenting the palette, type scale, spacing scale, component states. Aleksandar can iterate the brand once and the site follows.
+
+This is the "lock in a style guide" rule — without it every page drifts. With it, future pages cost half as much to build and the site stays cohesive.
+
+### Cache discipline
+
+`chapkanov-dev` is fully static — Astro emits static HTML/CSS. Vercel CDN handles caching. No application-level cache logic needed. **Skip "cache API data"** for v1 (no APIs).
+
 ## Out of scope (v1)
 
 - `/about` long-form CV page
@@ -118,6 +174,7 @@ chapkanov-dev/
       index.astro
       contact.astro
       404.astro
+      500.astro
       projects/[...slug].astro
       blog/index.astro
       blog/[...slug].astro
@@ -138,7 +195,11 @@ chapkanov-dev/
       config.ts
       projects/                 ← 6 MDX files
       blog/welcome.mdx
-    styles/base.css
+    styles/
+      base.css
+      tokens.css                 ← CSS custom properties for colours/spacing/fonts (light + dark)
+  docs/
+    design-system.md             ← palette, type scale, spacing scale, component states
   .github/workflows/ci.yml
 ```
 
@@ -243,6 +304,12 @@ Lighthouse audit on prod, capture `/` screenshot. Topics: `astro`, `portfolio`, 
 - [ ] `pnpm build` + `pnpm preview` works
 - [ ] All six project pages render with screenshots
 - [ ] Dark mode flips correctly, no FOUC
+- [ ] `404.astro` and `500.astro` exist and render friendly content (no stack traces)
+- [ ] All four states (loading / empty / error / success) defined for every async surface
+- [ ] Skeleton loaders used wherever a spinner was tempting
+- [ ] Every icon-only button has a tooltip + `aria-label`
+- [ ] Every `<img>` has explicit width/height + meaningful alt + lazy where appropriate
+- [ ] `src/styles/tokens.css` exists, Tailwind theme references it, `docs/design-system.md` documents it
 - [ ] Lighthouse on deployed URL ≥ 95 across all four metrics
 - [ ] Sitemap, RSS, robots.txt reachable
 - [ ] External links use `rel="noopener"` where appropriate
@@ -254,6 +321,7 @@ Lighthouse audit on prod, capture `/` screenshot. Topics: `astro`, `portfolio`, 
 
 - `/about` recruiter-friendly CV page
 - `/uses` page
+- `/design` page — public design-system page rendered from `docs/design-system.md`, doubles as a portfolio piece showing UX discipline
 - Real blog posts (3 ideas: "Building a tiny RAG", "Why MCP matters", "What I learned shipping a portfolio in 4 weeks")
 - Giscus comments
 - Custom domain
