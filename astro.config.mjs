@@ -32,9 +32,11 @@ export default defineConfig({
         ],
       },
     }),
-    // Sitemap is enabled in Phase 4 once the real route set lands.
-    // It crashes when the static page list is too small.
-    ...(process.env.ASTRO_ENABLE_SITEMAP === "1" ? [sitemap()] : []),
+    sitemap({
+      // Filter receives the full URL string. Match only the literal
+      // /404 and /500 routes, not deeper paths like /blog/404-tips.
+      filter: (page) => !/\/(?:404|500)\/?$/.test(page),
+    }),
   ],
   vite: {
     ssr: {
