@@ -15,7 +15,8 @@ interface Props {
   class?: string;
 }
 
-const { href, icon, label, external, class: className = "" } = Astro.props;
+const props: Props = Astro.props;
+const { href, icon, label, external, class: className = "" } = props;
 const isExternal = external ?? /^https?:/.test(href);
 const targetAttrs = isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {};
 ---
@@ -25,40 +26,10 @@ const targetAttrs = isExternal ? { target: "_blank", rel: "noopener noreferrer" 
   aria-label={label}
   data-tooltip={label}
   class:list={[
-    "icon-link inline-flex h-10 w-10 items-center justify-center rounded-md text-muted transition-colors duration-fast ease-out hover:bg-subtle hover:text-fg",
+    "tooltip-host inline-flex h-10 w-10 items-center justify-center rounded-md text-muted transition-colors duration-fast ease-out hover:bg-subtle hover:text-fg",
     className,
   ]}
   {...targetAttrs}
 >
   <Icon name={`lucide:${icon}`} class="h-5 w-5" aria-hidden="true" />
 </a>
-
-<style>
-  .icon-link {
-    position: relative;
-  }
-  .icon-link[data-tooltip]::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%) translateY(-2px);
-    padding: 4px 8px;
-    font-size: var(--fs-xs);
-    line-height: 1;
-    white-space: nowrap;
-    background: var(--color-fg);
-    color: var(--color-bg);
-    border-radius: var(--radius-sm);
-    opacity: 0;
-    pointer-events: none;
-    transition:
-      opacity var(--motion-fast) var(--ease-out),
-      transform var(--motion-fast) var(--ease-out);
-  }
-  .icon-link[data-tooltip]:hover::after,
-  .icon-link[data-tooltip]:focus-visible::after {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-</style>

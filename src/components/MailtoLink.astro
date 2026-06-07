@@ -1,0 +1,60 @@
+---
+import { Icon } from "astro-icon/components";
+
+/**
+ * MailtoLink — renders an icon-only mailto link with the address split
+ * into separate data-attrs and recombined in JS. Defeats most automated
+ * scrapers (which inspect static HTML) without hurting UX.
+ *
+ * No-JS fallback: clicking the button shows the address as text + a
+ * native mailto so the user can copy it.
+ */
+interface Props {
+  user: string;
+  domain: string;
+  label?: string;
+  class?: string;
+}
+
+const props: Props = Astro.props;
+const { user, domain, label = "Email", class: className = "" } = props;
+---
+
+<button
+  type="button"
+  class:list={[
+    "mailto-host tooltip-host inline-flex h-10 w-10 items-center justify-center rounded-md text-muted transition-colors duration-fast ease-out hover:bg-subtle hover:text-fg",
+    className,
+  ]}
+  aria-label={label}
+  data-tooltip={label}
+  data-u={user}
+  data-d={domain}
+>
+  <Icon name="lucide:mail" class="h-5 w-5" aria-hidden="true" />
+</button>
+
+<script>
+  const KEY_U = "u";
+  const KEY_D = "d";
+
+  const wire = () => {
+    const hosts = document.querySelectorAll<HTMLButtonElement>(".mailto-host");
+    for (const host of hosts) {
+      // Replace each <button> with a real <a> so right-click + keyboard work.
+      const u = host.dataset[KEY_U];
+      const d = host.dataset[KEY_D];
+      if (!u || !d) continue;
+      const a = document.createElement("a");
+      a.href = `mailto:${u}@${d}`;
+      a.className = host.className;
+      a.setAttribute("aria-label", host.getAttribute("aria-label") ?? "Email");
+      a.setAttribute("data-tooltip", host.dataset.tooltip ?? "Email");
+      a.innerHTML = host.innerHTML;
+      host.replaceWith(a);
+    }
+  };
+
+  wire();
+  document.addEventListener("astro:after-swap", wire);
+</script>

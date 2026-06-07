@@ -53,6 +53,36 @@ body {
   border: 0;
 }
 
+/* Tooltip — applied to any element with a data-tooltip attribute.
+   Pairs with aria-label (the source of truth for screen readers). */
+.tooltip-host {
+  position: relative;
+}
+.tooltip-host[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-2px);
+  padding: 4px 8px;
+  font-size: var(--fs-xs);
+  line-height: 1;
+  white-space: nowrap;
+  background: var(--color-fg);
+  color: var(--color-bg);
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity var(--motion-fast) var(--ease-out),
+    transform var(--motion-fast) var(--ease-out);
+}
+.tooltip-host[data-tooltip]:hover::after,
+.tooltip-host[data-tooltip]:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 /* Reveal-on-scroll primitive — disabled under prefers-reduced-motion. */
 [data-reveal] {
   opacity: 0;

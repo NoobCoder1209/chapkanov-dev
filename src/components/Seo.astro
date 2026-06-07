@@ -4,8 +4,7 @@
  * Used by every layout via <Seo title="…" description="…" />.
  *
  * Emits: title, description, canonical, og + twitter card meta, json-ld Person.
- * og:image defaults to /og-default.png (a 1200×630 site-wide fallback —
- * generated in Phase 4).
+ * og:image defaults to /og-default.svg (placeholder); Phase 4 swaps in a 1200×630 PNG.
  */
 interface Props {
   title: string;
@@ -20,12 +19,15 @@ interface Props {
 const {
   title,
   description = "Aleksandar Chapkanov — SRE by day, building with Claude and AI agents the rest of the time.",
-  ogImage = "/og-default.png",
+  ogImage = "/og-default.svg",
   personJsonLd = false,
   canonical,
 } = Astro.props;
 
-const site = Astro.site ?? new URL("https://chapkanov-dev.vercel.app");
+if (!Astro.site) {
+  throw new Error("Seo.astro: Astro.site is not configured. Set `site:` in astro.config.mjs.");
+}
+const site = Astro.site;
 const canonicalUrl = new URL(canonical ?? Astro.url.pathname, site).href;
 const ogImageUrl = new URL(ogImage, site).href;
 
@@ -63,7 +65,7 @@ const personSchema = {
 
 {
   personJsonLd && (
-    /* JSON-LD payload is built from static literals via JSON.stringify;
+    /* JSON-LD payload built from static literals via JSON.stringify;
        no user input flows into it, so set:html is safe here. */
     /* eslint-disable-next-line astro/no-set-html-directive */
     <script type="application/ld+json" is:inline set:html={JSON.stringify(personSchema)} />

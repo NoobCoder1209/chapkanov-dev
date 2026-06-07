@@ -34,20 +34,24 @@ const isCurrent = (href: string) => {
     </a>
 
     <nav aria-label="Primary" class="flex items-center gap-1">
-      {
-        links.map((l) => (
-          <a
-            href={l.href}
-            aria-current={isCurrent(l.href) ? "page" : undefined}
-            class:list={[
-              "rounded-md px-3 py-2 text-sm transition-colors duration-fast ease-out hover:text-fg",
-              isCurrent(l.href) ? "text-fg" : "text-muted",
-            ]}
-          >
-            {l.label}
-          </a>
-        ))
-      }
+      <ul class="flex items-center gap-1">
+        {
+          links.map((l) => (
+            <li>
+              <a
+                href={l.href}
+                aria-current={isCurrent(l.href) ? "page" : undefined}
+                class:list={[
+                  "block rounded-md px-3 py-2 text-sm transition-colors duration-fast ease-out hover:text-fg",
+                  isCurrent(l.href) ? "text-fg" : "text-muted",
+                ]}
+              >
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
       <span class="mx-2 hidden h-5 w-px bg-border sm:inline-block" aria-hidden="true"></span>
       <ThemeToggle />
     </nav>

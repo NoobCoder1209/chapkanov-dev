@@ -1,35 +1,29 @@
 ---
 import IconLink from "./IconLink.astro";
+import MailtoLink from "./MailtoLink.astro";
 
 /**
  * Footer — site-wide footer with social icon links and copyright line.
+ * The email entry uses MailtoLink (data-attr split, JS-recombined) to
+ * defeat naïve scrapers without hurting UX.
  */
 const year = new Date().getFullYear();
 
-const socials = [
-  {
-    href: "mailto:alexchapkanov@gmail.com",
-    icon: "mail",
-    label: "Email",
-    external: false,
-  },
+const externals = [
   {
     href: "https://github.com/NoobCoder1209",
     icon: "github",
     label: "GitHub",
-    external: true,
   },
   {
     href: "https://www.linkedin.com/in/aleksandar-chapkanov/",
     icon: "linkedin",
     label: "LinkedIn",
-    external: true,
   },
   {
     href: "https://www.upwork.com/freelancers/~014a7c68489b5acdf8",
     icon: "briefcase",
     label: "Upwork",
-    external: true,
   },
 ];
 ---
@@ -42,10 +36,13 @@ const socials = [
       © {year} Aleksandar Chapkanov. Built with Astro &amp; Tailwind.
     </p>
     <ul class="flex items-center gap-1">
+      <li>
+        <MailtoLink user="alexchapkanov" domain="gmail.com" label="Email" />
+      </li>
       {
-        socials.map((s) => (
+        externals.map((s) => (
           <li>
-            <IconLink href={s.href} icon={s.icon} label={s.label} external={s.external} />
+            <IconLink href={s.href} icon={s.icon} label={s.label} external />
           </li>
         ))
       }

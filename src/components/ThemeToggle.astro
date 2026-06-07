@@ -2,10 +2,10 @@
 import { Icon } from "astro-icon/components";
 
 /**
- * ThemeToggle — three-state toggle (light → dark → system) wired to the
+ * ThemeToggle — three-state toggle (system → light → dark) wired to the
  * pre-paint theme script in Base.astro. Persists via localStorage["theme"]
  * (values: "light", "dark", or absent meaning "system"). Re-syncs after
- * Astro view-transition swaps.
+ * Astro view-transition swaps. Storage helpers live in src/lib/theme.ts.
  */
 ---
 
@@ -14,7 +14,7 @@ import { Icon } from "astro-icon/components";
   id="theme-toggle"
   data-tooltip="Toggle theme"
   aria-label="Toggle color theme"
-  class="theme-toggle inline-flex h-10 w-10 items-center justify-center rounded-md text-muted transition-colors duration-fast ease-out hover:bg-subtle hover:text-fg"
+  class="theme-toggle tooltip-host inline-flex h-10 w-10 items-center justify-center rounded-md text-muted transition-colors duration-fast ease-out hover:bg-subtle hover:text-fg"
 >
   <Icon name="lucide:sun" class="theme-toggle-sun h-5 w-5" aria-hidden="true" />
   <Icon name="lucide:moon" class="theme-toggle-moon h-5 w-5" aria-hidden="true" />
@@ -24,36 +24,10 @@ import { Icon } from "astro-icon/components";
 
 <style>
   .theme-toggle {
-    position: relative;
     display: inline-grid;
     place-items: center;
   }
-  .theme-toggle[data-tooltip]::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%) translateY(-2px);
-    padding: 4px 8px;
-    font-size: var(--fs-xs);
-    line-height: 1;
-    white-space: nowrap;
-    background: var(--color-fg);
-    color: var(--color-bg);
-    border-radius: var(--radius-sm);
-    opacity: 0;
-    pointer-events: none;
-    transition:
-      opacity var(--motion-fast) var(--ease-out),
-      transform var(--motion-fast) var(--ease-out);
-  }
-  .theme-toggle[data-tooltip]:hover::after,
-  .theme-toggle[data-tooltip]:focus-visible::after {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  /* Show exactly one icon based on the current toggle mode (system / light / dark). */
+  /* Show exactly one icon based on the current toggle mode. */
   .theme-toggle-sun,
   .theme-toggle-moon,
   .theme-toggle-system {
@@ -80,52 +54,38 @@ import { Icon } from "astro-icon/components";
 </style>
 
 <script>
-  const KEY = "theme";
-  type Mode = "system" | "light" | "dark";
-  const ROTATION: Mode[] = ["system", "light", "dark"];
+  import {
+    THEME_ROTATION,
+    safeGetTheme,
+    safeSetTheme,
+    applyTheme,
+    type ThemeMode,
+  } from "../lib/theme";
 
-  const safeGet = (): Mode => {
-    try {
-      const v = localStorage.getItem(KEY);
-      if (v === "light" || v === "dark") return v;
-    } catch {
-      /* private mode / disabled storage */
-    }
-    return "system";
-  };
-
-  const safeSet = (mode: Mode) => {
-    try {
-      if (mode === "system") localStorage.removeItem(KEY);
-      else localStorage.setItem(KEY, mode);
-    } catch {
-      /* swallow — runtime toggle still works for this session */
-    }
-  };
-
-  const apply = (mode: Mode) => {
-    const isDark =
-      mode === "dark" ||
-      (mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-    document.documentElement.classList.toggle("dark", isDark);
-    document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+  const NEXT_LABEL: Record<ThemeMode, string> = {
+    system: "Switch to light theme",
+    light: "Switch to dark theme",
+    dark: "Switch to system theme",
   };
 
   const sync = () => {
     const btn = document.getElementById("theme-toggle");
     if (!btn) return;
-    const mode = safeGet();
+    const mode = safeGetTheme();
     btn.setAttribute("data-mode", mode);
+    btn.setAttribute("aria-label", NEXT_LABEL[mode]);
+    btn.setAttribute("data-tooltip", NEXT_LABEL[mode]);
     const status = btn.querySelector<HTMLSpanElement>("[data-theme-status]");
     if (status) status.textContent = `Theme: ${mode}`;
   };
 
   const onClick = () => {
-    const current = safeGet();
-    const next = ROTATION[(ROTATION.indexOf(current) + 1) % ROTATION.length];
-    safeSet(next);
-    apply(next);
+    const current = safeGetTheme();
+    const next = THEME_ROTATION[(THEME_ROTATION.indexOf(current) + 1) % THEME_ROTATION.length];
+    safeSetTheme(next);
+    applyTheme(next);
     sync();
+    document.dispatchEvent(new CustomEvent("theme:change", { detail: { mode: next } }));
   };
 
   const wire = () => {
