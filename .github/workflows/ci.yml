@@ -30,3 +30,20 @@ jobs:
       - run: pnpm check
 
       - run: pnpm build
+
+      - name: Verify dist artifacts
+        run: |
+          set -e
+          test -f dist/index.html
+          test -f dist/sitemap-index.xml
+          test -f dist/sitemap-0.xml
+          test -f dist/robots.txt
+          test -f dist/og-default.png
+          test -f dist/404.html
+          test -f dist/500.html
+          test -f dist/contact/index.html
+          test -f dist/now/index.html
+          for slug in claude-agent-starter devopscourse github-actions-templates helm-chart-template jenkins-docker-sonarqube k8s-pod-doctor markdown-rag mcp-server-sample terraform-aws-static-site; do
+            test -f "dist/projects/$slug/index.html"
+          done
+          echo "All expected artifacts present."

@@ -4,7 +4,7 @@
  * Used by every layout via <Seo title="…" description="…" />.
  *
  * Emits: title, description, canonical, og + twitter card meta, json-ld Person.
- * og:image defaults to /og-default.svg (placeholder); Phase 4 swaps in a 1200×630 PNG.
+ * og:image defaults to /og-default.png (1200×630, generated from SVG via sharp).
  */
 interface Props {
   title: string;
@@ -19,7 +19,7 @@ interface Props {
 const {
   title,
   description = "Aleksandar Chapkanov — SRE by day, building with Claude and AI agents the rest of the time.",
-  ogImage = "/og-default.svg",
+  ogImage = "/og-default.png",
   personJsonLd = false,
   canonical,
 } = Astro.props;
