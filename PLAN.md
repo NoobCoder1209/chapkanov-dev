@@ -1,62 +1,99 @@
 # `chapkanov-dev` — Execution Plan
 
-> Self-contained build plan. Inherits shared standards from the master plan.
+## How to use this plan
+
+You are the build session for this repo. Read this file end-to-end, then start executing immediately.
+
+**Working agreement:**
+
+1. **Start without waiting.** Begin Phase 1 in the *Subagent playbook* below.
+2. **Always ask the user about business decisions and business logic.** Bio copy, hero tagline, project order, screenshots, colour palette / theme, contact links, blog welcome post text, custom domain timing. The "Business decisions" section below lists them.
+3. **Ask the user when you are genuinely blocked.**
+4. **Do not ask the user about engineering details.** Component shape, layout structure, prop names, MDX schema — your call.
+5. **Use subagents aggressively.** Default to the playbook below.
+6. **TaskCreate / TaskUpdate everything.**
+7. **Pattern 3 only — except for this site.** This repo *is* the public deployed artefact. The site itself runs on Vercel free tier with Vercel Web Analytics or Plausible. No Anthropic API calls from this repo at all. Never commit secrets.
+8. **Follow shared standards** (MIT, README, CI, topics, private until verified).
+9. **All `Agent` tool calls must pass `model: "opus"`.**
+10. **Off-limits forever:** SAP-internal references, `~/.claude/` material, RCA content. Aleksandar's bio mentions SAP work in general terms only, never specifics.
+
+## Subagent playbook (this repo)
+
+UI repo with multiple concerns (build pipeline, content collections, design, SEO). 4 in research, 2 in review.
+
+**Phase 1 — Research (parallel):**
+- `Explore` (Opus): "Find current Astro 4.x + Tailwind setup with `@astrojs/mdx`, `@astrojs/sitemap`, `@astrojs/rss`, `astro-icon` + Lucide. Return a working `astro.config.mjs` and content-collections setup."
+- `Explore` (Opus): "Find best-practice dark/light theme toggle in Astro that avoids FOUC (inline pre-paint script). Return ≤30-line snippet."
+- `Explore` (Opus): "Find Vercel Web Analytics integration for an Astro site (`@vercel/analytics/astro`). Return setup steps and any caveats."
+- `Explore` (Opus): "Find Lighthouse-friendly Astro starter patterns for portfolios (image handling, font loading, critical CSS). Return a 10-bullet checklist."
+
+**Phase 2 — Design (single):**
+- `Plan` (Opus): "Given research and this PLAN.md, propose the page list, component list, content collection schema, and 5-step build order. Return as a checklist."
+
+**Phase 3 — Build:** main session writes Astro + Tailwind + MDX content. Dispatch `Explore` for design questions on demand.
+
+**Phase 4 — Review (parallel):**
+- `code-reviewer` (Opus): "Review for: SEO completeness (sitemap, robots, og:image, canonical), accessibility (alt text, heading order, contrast), performance (image dims, preload, lazy-load), no SAP/Claude-Code references in copy. High effort."
+- `tester` (Opus): "Run Lighthouse on `pnpm build && pnpm preview` locally and on the deployed Vercel URL. Confirm ≥95 across Performance / Accessibility / Best Practices / SEO. Surface any failures with fixes."
+
+**Phase 5 — Polish:** capture screenshot of `/`, run final Lighthouse, ask user before flipping public.
+
+---
 
 ## Goal
 
 The personal portfolio site. Single source of truth for "this is who Aleksandar
-is and these are his projects." Everything else (Upwork, LinkedIn, CV)
-eventually links here.
+is and these are his projects." Everything else (Upwork, LinkedIn, CV) eventually
+links here.
 
-**v1 = portfolio only**: bio + projects + contact. Blog structure built but
-empty (one welcome post). CV/about page deferred to v2.
+**v1 = portfolio only**: bio + projects + contact. Blog structure built but empty
+(one welcome post). CV/about page deferred to v2.
 
-**Sells:** the rest of the portfolio. Site quality itself is a hiring signal —
-Lighthouse ≥ 95 across the board.
+**Sells:** the rest of the portfolio. Site quality itself is a hiring signal.
+
+## Business decisions to ask the user about
+
+- **Hero tagline / one-liner** — must align with the Upwork "AI Apps & Integration" positioning while not lying about depth.
+- **Bio copy** (~3–4 paragraphs) — the user's voice, not yours. Use their `human` skill style if available, otherwise ask them.
+- **Pinned project order** — recommend AI repos first (1–3), then DevOps (4, 7, 8), then Terraform (5), then GymApp card.
+- **Project card screenshots** — placeholders during build, real images before public flip. Each repo build session produces one; coordinate.
+- **Colour palette / brand tone** — recommend dark-default, neutral palette with one accent. Ask before committing.
+- **Email shown publicly on `/contact`** vs a contact form — recommend just the email + GitHub + LinkedIn + Upwork links (no form, no backend).
+- **Custom domain timing** — site ships on `chapkanov-dev.vercel.app` first; user buys domain separately and tells you when to wire DNS.
 
 ## Scope (must-haves)
 
 1. Astro 4.x + Tailwind, MDX-driven content collections.
-2. Pages: `/` (hero + bio + project grid + contact CTA), `/projects/[slug]`
-   (one MDX page per public project), `/contact`, `/blog` (index), `/blog/[slug]`
-   (one welcome post placeholder), 404.
-3. **Six project pages** (one per pinned repo). Each pulls metadata from the MDX
-   frontmatter and renders a hero, summary, "Skills", "Tech stack", screenshots
-   gallery, "View on GitHub" CTA.
-4. Vercel Web Analytics enabled (free tier, no cookies).
-5. SEO: per-page `<title>`, meta description, `og:image` (one shared site default
-   plus project-specific overrides), `sitemap.xml`, `robots.txt`, `feed.xml` for
-   the blog.
-6. Dark/light theme toggle (system-preference default, persisted to `localStorage`).
-7. Lighthouse target ≥ 95 on Performance / Accessibility / Best Practices / SEO.
-8. Deployed at `https://chapkanov-dev.vercel.app` (free Vercel URL) initially.
-   Custom domain wiring is out-of-band (the user will buy one separately).
-9. Repo deployed-from-`main` so each merge = ship.
+2. Pages: `/`, `/projects/[slug]`, `/contact`, `/blog`, `/blog/[slug]`, 404.
+3. **Six project pages** (one per pinned repo) — each with hero, summary, "Skills", "Tech stack", screenshots, "View on GitHub" CTA.
+4. Vercel Web Analytics enabled.
+5. SEO: per-page `<title>`, meta description, `og:image`, sitemap, robots, RSS.
+6. Dark/light theme toggle with system-preference default + `localStorage`.
+7. Lighthouse ≥ 95 across Performance / Accessibility / Best Practices / SEO.
+8. Deployed at `https://chapkanov-dev.vercel.app` initially. Custom domain later.
+9. Repo deployed-from-`main`.
 
 ## Out of scope (v1)
 
-- `/about` long-form CV page → v2
-- Real blog content (the structure exists; only one welcome post, no full posts) → v2
-- Comments (Giscus / Utterances) → v2
-- Testimonials section → v2 (need actual clients first)
-- `/uses` page → v2
-- Internationalisation
+- `/about` long-form CV page
+- Real blog content beyond one welcome post
+- Comments
+- Testimonials
+- `/uses` page
+- i18n
 - Newsletter signup
 - Custom domain (separate decision)
 
 ## Tech stack
 
-- **Framework:** Astro 4.x (`@astrojs/mdx`, `@astrojs/sitemap`, `@astrojs/rss`)
-- **Styling:** Tailwind CSS via `@astrojs/tailwind`
-- **Hosting:** Vercel (`@astrojs/vercel/serverless` adapter, but this is a
-  fully static site — output `static` is fine)
-- **Analytics:** `@vercel/analytics/astro` (or Plausible if Aleksandar prefers;
-  Vercel is one less account)
-- **Theme:** Tailwind `dark:` class strategy with a tiny inline script to set
-  `class="dark"` before paint to avoid FOUC
-- **Icons:** `astro-icon` with the Lucide pack (small, free, MIT)
+- **Framework:** Astro 4.x
+- **Styling:** Tailwind via `@astrojs/tailwind`
+- **Hosting:** Vercel (`output: "static"`)
+- **Analytics:** `@vercel/analytics/astro`
+- **Theme:** Tailwind `dark:` class strategy + inline FOUC-prevention script
+- **Icons:** `astro-icon` + Lucide
 - **Linting:** `eslint` + `prettier` + `prettier-plugin-astro` + `prettier-plugin-tailwindcss`
-- **CI:** GitHub Actions (Vercel handles the actual deploy via its GitHub app)
+- **CI:** GitHub Actions (Vercel handles actual deploy)
 
 ## File tree
 
@@ -71,11 +108,11 @@ chapkanov-dev/
   astro.config.mjs
   tailwind.config.mjs
   tsconfig.json
-  vercel.json                     ← optional, mainly for headers
+  vercel.json
   public/
     favicon.svg
     og-default.png
-    robots.txt                    ← generated or static
+    robots.txt
   src/
     pages/
       index.astro
@@ -84,6 +121,7 @@ chapkanov-dev/
       projects/[...slug].astro
       blog/index.astro
       blog/[...slug].astro
+      feed.xml.ts
     layouts/
       Base.astro
       Project.astro
@@ -97,21 +135,11 @@ chapkanov-dev/
       SkillBadge.astro
       Seo.astro
     content/
-      config.ts                   ← Astro content collections config
-      projects/                   ← 6 MDX files (one per pinned repo)
-        claude-agent-starter.mdx
-        markdown-rag.mdx
-        mcp-server-sample.mdx
-        helm-chart-template.mdx
-        terraform-aws-static-site.mdx
-        gymapp.mdx
-      blog/
-        welcome.mdx
-    styles/
-      base.css
-  .github/
-    workflows/
-      ci.yml
+      config.ts
+      projects/                 ← 6 MDX files
+      blog/welcome.mdx
+    styles/base.css
+  .github/workflows/ci.yml
 ```
 
 ## Step-by-step build
@@ -128,14 +156,8 @@ pnpm install
 
 `astro.config.mjs`:
 ```js
-import { defineConfig } from "astro/config";
-import mdx from "@astrojs/mdx";
-import tailwind from "@astrojs/tailwind";
-import sitemap from "@astrojs/sitemap";
-import icon from "astro-icon";
-
 export default defineConfig({
-  site: "https://chapkanov.dev", // update once domain bought
+  site: "https://chapkanov.dev",
   integrations: [tailwind(), mdx(), sitemap(), icon()],
   output: "static",
 });
@@ -143,21 +165,13 @@ export default defineConfig({
 
 ### 2. Layouts
 
-`Base.astro` — shell with `<html>`, theme script (set `class="dark"` before
-paint), `<Header />`, `<slot />`, `<Footer />`. Inject Vercel Analytics
-(`<Analytics />`) once. Pulls SEO metadata from props.
-
-`Project.astro` — wraps Base, renders project hero + frontmatter (title,
-description, skills, tech stack, repo URL, screenshots), then `<slot />` for
-MDX body.
-
+`Base.astro` — shell with `<html>`, theme script, header, slot, footer, `<Analytics />`.
+`Project.astro` — wraps Base, renders project hero + frontmatter + slot.
 `Blog.astro` — wraps Base, renders post date + title + slot.
 
-### 3. Content collections (`src/content/config.ts`)
+### 3. Content collections
 
 ```ts
-import { defineCollection, z } from "astro:content";
-
 const projects = defineCollection({
   type: "content",
   schema: z.object({
@@ -172,150 +186,76 @@ const projects = defineCollection({
     order: z.number().default(99),
   }),
 });
-
-const blog = defineCollection({
-  type: "content",
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    pubDate: z.coerce.date(),
-    draft: z.boolean().default(false),
-  }),
-});
-
+const blog = defineCollection({ type: "content", schema: z.object({ title: z.string(), description: z.string(), pubDate: z.coerce.date(), draft: z.boolean().default(false) }) });
 export const collections = { projects, blog };
 ```
 
 ### 4. Project MDX template
 
-Each `src/content/projects/<slug>.mdx`:
-
-```mdx
----
-title: claude-agent-starter
-pitch: The minimal, opinionated Claude agent template.
-repo: https://github.com/NoobCoder1209/claude-agent-starter
-skills: [Anthropic Claude API, AI Agent Development, Prompt Engineering, TypeScript]
-techStack: [TypeScript, Node.js, Anthropic SDK, pnpm, Vitest]
-screenshots:
-  - { src: /projects/claude-agent-starter/demo.png, alt: "Agent answering a question" }
-pinned: true
-order: 1
----
-
-## What it does
-
-Short paragraph...
-
-## How it works
-
-Short paragraph + maybe a code snippet...
-
-## Why I built it
-
-Personal-voice paragraph (1–2 sentences).
-```
-
-Six of these total. The `gymapp.mdx` one points its `repo` field to
-`https://github.com/2Bros1Mission/GymApp` and notes in body that the source is
-private; screenshots tell the story.
+Six files, one per pinned repo. Each: title, pitch, repo URL, skills, techStack, screenshots, pinned, order. The GymApp one points at `2Bros1Mission/GymApp` and notes source is private.
 
 ### 5. Pages
 
-- `index.astro` — hero (name + tagline + CTA), short bio, project grid (filter
-  `pinned: true`, sort by `order`), contact CTA at bottom.
-- `projects/[...slug].astro` — `getStaticPaths` from the projects collection,
-  render with `Project.astro`.
-- `contact.astro` — simple page: email, GitHub, LinkedIn, Upwork. No form
-  (Pattern 3 — no backend).
+- `index.astro` — hero, bio, project grid (filter `pinned`, sort `order`), contact CTA.
+- `projects/[...slug].astro` — `getStaticPaths` from collection.
+- `contact.astro` — email + social links.
 - `blog/index.astro` — list non-draft posts.
-- `blog/[...slug].astro` — render with `Blog.astro`. RSS feed at `/feed.xml`.
-- `404.astro` — friendly 404 with home link.
+- `blog/[...slug].astro` — render post.
+- `404.astro` — friendly 404.
 
 ### 6. Components
 
-- **Header** — name link, nav (Home, Projects, Blog, Contact), theme toggle.
-- **Footer** — small print + social icons.
-- **ThemeToggle** — button toggling `document.documentElement.classList`,
-  syncing `localStorage["theme"]`.
-- **ProjectCard** — image, title, pitch, skill badges (top 4), CTA.
-- **SkillBadge** — Tailwind pill, lowercase, hover state.
-- **Hero** — `h1` + tagline + two CTAs (Projects, Contact).
-- **Seo** — `<head>` partial taking `{ title, description, image, canonical }`.
+Header, Footer, ThemeToggle, ProjectCard, SkillBadge, Hero, Seo.
 
-### 7. SEO + sitemap + RSS
+### 7. SEO + sitemap + RSS + robots
 
-- Sitemap auto-generated by `@astrojs/sitemap`.
-- RSS via `@astrojs/rss` at `src/pages/feed.xml.ts` reading the blog collection.
-- `robots.txt` in `public/` allowing all + pointing at sitemap.
-- Default `og:image` at `public/og-default.png`. Project pages can override via
-  frontmatter (Aleksandar can decide later — v1 ships with the default for all).
+Sitemap auto, RSS at `/feed.xml`, `robots.txt` allowing all + sitemap, default `og:image`.
 
 ### 8. Analytics
 
-`@vercel/analytics/astro` `<Analytics />` placed once in `Base.astro` near
-`</body>`. No env var needed; Vercel auto-detects the project.
+`<Analytics />` once in `Base.astro`.
 
 ### 9. CI
 
-`.github/workflows/ci.yml`:
-- Setup Node 20 + pnpm
-- `pnpm install --frozen-lockfile`
-- `pnpm exec astro check` (type-checks and content collection schema)
-- `pnpm exec prettier --check .`
-- `pnpm exec astro build`
-
-No deploy step in CI — Vercel's GitHub app handles `main` deploys.
+Setup Node 20 + pnpm; install; `astro check`; `prettier --check .`; `astro build`. Vercel deploys on `main`.
 
 ### 10. Vercel wiring
 
-- Connect `NoobCoder1209/chapkanov-dev` to a new Vercel project named `chapkanov-dev`.
-- Framework preset: Astro (auto-detected).
-- Production branch: `main`. Preview deployments on every PR.
-- Add the project to a free Vercel team if Aleksandar uses one.
+Connect repo to Vercel project `chapkanov-dev`. Astro preset auto. Production = `main`, previews on PR.
 
 ### 11. README
 
-1. **Title** — *chapkanov-dev — Personal portfolio site*
-2. **Demo** — link to live URL once deployed; otherwise screenshot of `/`
-3. **What it shows** — Astro + Tailwind, content collections, dark mode, Vercel deploy, ≥95 Lighthouse
-4. **Skills demonstrated** — Astro, TypeScript, Tailwind, MDX, Vercel, SEO, Web Performance
-5. **Quick start**:
-   ```bash
-   pnpm install
-   pnpm dev
-   ```
-6. **Adding a project** — short snippet showing the MDX frontmatter
-7. **License** — MIT
+1. Title — *chapkanov-dev — Personal portfolio site*
+2. Demo — link to live URL
+3. What it shows — Astro + Tailwind, content collections, dark mode, Vercel deploy, ≥95 Lighthouse
+4. Skills demonstrated — Astro, TypeScript, Tailwind, MDX, Vercel, SEO, Web Performance
+5. Quick start: `pnpm install && pnpm dev`
+6. Adding a project — short MDX frontmatter snippet
+7. License — MIT
 
 ### 12. Polish + flip public
 
-Capture a screenshot of the deployed `/`. Run Lighthouse on the prod URL
-(target ≥ 95 each metric). Topics: `astro`, `portfolio`, `tailwindcss`,
-`vercel`, `mdx`, `personal-website`. Flip public.
+Lighthouse audit on prod, capture `/` screenshot. Topics: `astro`, `portfolio`, `tailwindcss`, `vercel`, `mdx`, `personal-website`. Ask user before flipping.
 
 ## Verification
 
-- [ ] `pnpm dev` works on a fresh clone
+- [ ] `pnpm dev` works fresh clone
 - [ ] `pnpm build` + `pnpm preview` works
-- [ ] All six project pages render with screenshots (placeholder OK during build, real before public flip)
+- [ ] All six project pages render with screenshots
 - [ ] Dark mode flips correctly, no FOUC
-- [ ] Lighthouse on the deployed URL ≥ 95 across Performance / Accessibility / Best Practices / SEO
-- [ ] Sitemap, RSS, robots.txt all reachable
-- [ ] All external links use `rel="noopener"` where appropriate
-- [ ] Vercel Analytics live (test by visiting in another browser, dashboard records the visit)
+- [ ] Lighthouse on deployed URL ≥ 95 across all four metrics
+- [ ] Sitemap, RSS, robots.txt reachable
+- [ ] External links use `rel="noopener"` where appropriate
+- [ ] Vercel Analytics live (test by visiting in another browser)
 - [ ] No SAP-internal references; no `~/.claude/` references
-- [ ] Repo topics + description set
+- [ ] Topics + description set
 
 ## Stretch (defer to v2)
 
-- `/about` recruiter-friendly CV page (replaces the PDF)
+- `/about` recruiter-friendly CV page
 - `/uses` page
-- Real blog posts (start with the three ideas: "Building a tiny RAG", "Why MCP matters",
-  "What I learned shipping a portfolio in 4 weeks")
-- Giscus comments on blog posts
-- Custom domain (`chapkanov.dev` — out-of-band purchase)
-- Testimonials carousel once Upwork engagements exist
+- Real blog posts (3 ideas: "Building a tiny RAG", "Why MCP matters", "What I learned shipping a portfolio in 4 weeks")
+- Giscus comments
+- Custom domain
+- Testimonials carousel
 - Project filter / search
-
-Captured for v2 planning. Do not pull into v1.
