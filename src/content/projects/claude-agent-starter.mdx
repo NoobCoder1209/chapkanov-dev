@@ -1,0 +1,29 @@
+---
+title: claude-agent-starter
+pitch: The minimal, opinionated Claude agent template — Anthropic SDK with prompt caching, tool use, and streaming.
+repo: https://github.com/NoobCoder1209/claude-agent-starter
+category: ai
+order: 5
+pinned: true
+status: public
+skills:
+  - LLM agent design
+  - Prompt caching
+  - Tool-use loops
+  - SDK ergonomics
+techStack:
+  - TypeScript
+  - "@anthropic-ai/sdk"
+  - Node.js
+  - Vitest
+---
+
+The repo I clone every time I want to start something with Claude. Not a
+framework — just the thinnest layer that gets prompt caching, tool use, and
+streamed responses right, with one small example agent that loops until it has
+an answer.
+
+Caching is wired with `cache_control` from day one (it's free latency once you
+know it's there, and easy to forget if you don't), the tool loop terminates on
+`stop_reason`, and the example reads its API key from `.env`. Everything else
+is up to you.

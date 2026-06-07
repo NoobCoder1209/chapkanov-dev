@@ -1,0 +1,29 @@
+---
+title: terraform-aws-static-site
+pitch: End-to-end Terraform module for static sites on AWS — S3 + CloudFront + ACM + Route53, OAC-backed, SPA-friendly.
+repo: https://github.com/NoobCoder1209/terraform-aws-static-site
+category: terraform
+order: 8
+pinned: true
+status: public
+skills:
+  - Terraform module design
+  - AWS architecture
+  - DNS + TLS automation
+  - Edge caching
+techStack:
+  - Terraform
+  - AWS S3
+  - CloudFront
+  - ACM
+  - Route53
+  - OAC
+---
+
+The "I just want to host a static site on AWS the right way" module. S3 origin
+locked down via Origin Access Control (no public bucket), CloudFront in front
+with sane cache rules, ACM for TLS, Route53 for DNS, all wired so a single
+`terraform apply` gets you a working site at your domain.
+
+SPA-friendly out of the box: the CloudFront error responses route 403/404 to
+`index.html` so client-side routes don't break.

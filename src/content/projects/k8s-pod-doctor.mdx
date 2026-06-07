@@ -1,0 +1,28 @@
+---
+title: k8s-pod-doctor
+pitch: A CLI that auto-diagnoses sick Kubernetes pods — status, events, log tails, and pattern-matched verdicts in one command.
+repo: https://github.com/NoobCoder1209/k8s-pod-doctor
+category: devops
+order: 4
+pinned: true
+status: public
+skills:
+  - Go CLI development
+  - Kubernetes debugging
+  - Pattern matching
+  - Developer ergonomics
+techStack:
+  - Go
+  - client-go
+  - Cobra
+  - Kubernetes API
+---
+
+When a pod is unhappy, the same five `kubectl` commands get run in roughly the
+same order. `pod-doctor` does that work in one shot: pulls status, recent
+events, the last N log lines from each container, and runs them through a small
+ruleset to surface a probable cause ("ImagePullBackOff: registry auth failed",
+"OOMKilled in last 5m", etc.).
+
+Built on `client-go` so it works against any cluster your kubeconfig can reach.
+No agent, no controller — just a single static binary.

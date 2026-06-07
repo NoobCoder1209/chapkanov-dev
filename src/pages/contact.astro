@@ -1,18 +1,68 @@
 ---
 import Base from "../layouts/Base.astro";
 import Reveal from "../components/Reveal.astro";
+import IconLink from "../components/IconLink.astro";
+import MailtoLink from "../components/MailtoLink.astro";
+
+const externals = [
+  {
+    href: "https://github.com/NoobCoder1209",
+    icon: "github",
+    label: "GitHub",
+    text: "NoobCoder1209",
+  },
+  {
+    href: "https://www.linkedin.com/in/aleksandar-chapkanov/",
+    icon: "linkedin",
+    label: "LinkedIn",
+    text: "aleksandar-chapkanov",
+  },
+  {
+    href: "https://www.upwork.com/freelancers/~014a7c68489b5acdf8",
+    icon: "briefcase",
+    label: "Upwork",
+    text: "Open to freelance work",
+  },
+];
 ---
 
 <Base
   title="Contact — chapkanov.dev"
   description="Reach Aleksandar Chapkanov by email, GitHub, LinkedIn, or Upwork."
 >
-  <section class="container-page py-24">
+  <section class="container-page py-24 md:py-32">
     <Reveal>
-      <h1 class="text-4xl font-semibold tracking-tight md:text-5xl">Contact</h1>
-      <p class="mt-4 max-w-prose text-lg text-muted">
-        Real contact page lands in Phase 3. Footer icons already work.
+      <p class="font-mono text-sm uppercase tracking-widest text-muted">Contact</p>
+      <h1 class="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">Let's talk.</h1>
+      <p class="mt-6 max-w-prose text-lg text-muted">
+        Best way to reach me is email. I read everything; I don't always reply the same day. For
+        paid work, Upwork is the cleanest route.
       </p>
+    </Reveal>
+
+    <Reveal class="mt-12" delayMs={60}>
+      <ul class="grid gap-3 sm:max-w-md">
+        <li class="flex items-center gap-4 rounded-lg border border-border bg-card p-4">
+          <MailtoLink user="alexchapkanov" domain="gmail.com" label="Email" />
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-medium text-fg">Email</p>
+            <p class="truncate font-mono text-sm text-muted">
+              alexchapkanov<span aria-hidden="true">&#64;</span>gmail.com
+            </p>
+          </div>
+        </li>
+        {
+          externals.map((s) => (
+            <li class="flex items-center gap-4 rounded-lg border border-border bg-card p-4">
+              <IconLink href={s.href} icon={s.icon} label={s.label} external />
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-medium text-fg">{s.label}</p>
+                <p class="truncate text-sm text-muted">{s.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
     </Reveal>
   </section>
 </Base>
