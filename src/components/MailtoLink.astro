@@ -6,7 +6,9 @@ import { Icon } from "astro-icon/components";
  * into separate data-attrs and recombined in JS. Defeats most automated
  * scrapers (which inspect static HTML) without hurting UX.
  *
- * No-JS users get a <noscript> fallback that exposes the address as text.
+ * No-JS users get a <noscript> fallback that exposes the address with
+ * "[at]" instead of "@" — readable to humans, opaque to naïve scrapers
+ * that grep raw HTML for "@" or look for the &#64; entity.
  */
 interface Props {
   user: string;
@@ -34,7 +36,7 @@ const { user, domain, label = "Email", class: className = "" } = props;
 </button>
 
 <noscript>
-  <span class="text-sm text-muted">{user}&#64;{domain}</span>
+  <span class="text-sm text-muted">{user}[at]{domain}</span>
 </noscript>
 
 <script>
