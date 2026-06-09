@@ -5,6 +5,13 @@
 
 **Live:** [chapkanov-dev.vercel.app](https://chapkanov-dev.vercel.app)
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="public/screenshots/homepage-dark.png" />
+    <img alt="chapkanov.dev homepage above the fold — hero, theme toggle, and the start of the bio block" src="public/screenshots/homepage-light.png" width="900" />
+  </picture>
+</p>
+
 ## What it shows
 
 - **Astro 4 + Tailwind** with design tokens locked in CSS custom properties (light + dark themes share the same component code)
@@ -77,6 +84,7 @@ src/
 docs/design-system.md         — palette / type / spacing / motion reference
 ```
 
+See [`guide.md`](./guide.md) for an operator's walkthrough — running, verifying, and troubleshooting the site end-to-end.
 See [`docs/design-system.md`](./docs/design-system.md) for the full visual system reference.
 See [`PLAN.md`](./PLAN.md) for the build plan that produced this site.
 
