@@ -8,7 +8,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="public/screenshots/homepage-dark.png" />
-    <img alt="chapkanov.dev homepage — hero, bio, and 9 project cards in 4 category groups" src="public/screenshots/homepage-light.png" width="900" />
+    <img alt="chapkanov.dev homepage above the fold — hero, theme toggle, and the start of the bio block" src="public/screenshots/homepage-light.png" width="900" />
   </picture>
 </p>
 

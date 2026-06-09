@@ -1,11 +1,16 @@
 # `chapkanov-dev` — operator's guide
 
-> **Last verified:** 2026-06-09 against commit `82ba09f`. Ran `pnpm install &&
-pnpm dev` on macOS (Node 26.0.0, pnpm 10.18.1). Localhost:4321 returned HTTP
-> 200, ~108KB. The homepage rendered with hero ("Hi, I'm Aleksandar. I ship
-> things."), 3-paragraph bio, 9 project cards in 4 category groups (DevOps /
-> AI / Terraform / Learning notes), footer with obfuscated email + 3 social
+> **Last verified:** 2026-06-09 against `main` at parent commit `82ba09f`,
+> immediately before adding this guide. Ran `pnpm install && pnpm dev` on
+> macOS, pnpm 10.18.1. Localhost:4321 returned HTTP 200, ~108KB. The
+> homepage rendered with hero ("Hi, I'm Aleksandar. I ship things."),
+> 3-paragraph bio, 9 project cards in 4 category groups (DevOps / AI /
+> Terraform / Learning notes), footer with obfuscated email + 3 social
 > links. `pnpm build` emitted 14 static pages plus `sitemap-index.xml`.
+
+> **Note on doc rot:** this guide enumerates exact file lists and pinned
+> versions. When in doubt, trust the source of truth (`package.json`,
+> `src/`, `astro.config.mjs`) over this file.
 
 `chapkanov-dev` is the personal portfolio site at
 [chapkanov-dev.vercel.app](https://chapkanov-dev.vercel.app). It's a static
@@ -231,22 +236,28 @@ curl -s -o /dev/null -w "%{http_code} %{size_download}b\n" http://localhost:4321
 # → 200 1xxxxxb   (around 100–110 KB)
 ```
 
-Other routes you can hit:
+Routes that work in **dev** (`pnpm dev`):
 
-| Route                               | Expected status |
-| ----------------------------------- | --------------- |
-| `/`                                 | 200             |
-| `/contact`                          | 200             |
-| `/now`                              | 200             |
-| `/projects/markdown-rag`            | 200             |
-| `/projects/<any of 9 slugs>`        | 200             |
-| `/projects/does-not-exist`          | 404             |
-| `/og-default.png`                   | 200 (~66 KB)    |
-| `/robots.txt`                       | 200             |
-| `/sitemap-index.xml` _(prod build)_ | 200             |
+| Route                        | Expected status |
+| ---------------------------- | --------------- |
+| `/`                          | 200             |
+| `/contact`                   | 200             |
+| `/now`                       | 200             |
+| `/projects/markdown-rag`     | 200             |
+| `/projects/<any of 9 slugs>` | 200             |
+| `/projects/does-not-exist`   | 404             |
+| `/og-default.png`            | 200             |
+| `/robots.txt`                | 200             |
 
-The sitemap only exists after `pnpm build`; in dev mode the integration
-doesn't run.
+Routes that only exist **after a build** (`pnpm build && pnpm preview`):
+
+| Route                | Expected status |
+| -------------------- | --------------- |
+| `/sitemap-index.xml` | 200             |
+| `/sitemap-0.xml`     | 200             |
+
+The sitemap integration doesn't emit anything in dev mode — it only runs
+during `pnpm build`.
 
 ### C. The browser check
 
@@ -321,9 +332,17 @@ Node to 20 or later.
 ### `[ERR_PNPM_IGNORED_BUILDS] Ignored build scripts: esbuild, sharp`
 
 pnpm 10 blocks postinstall scripts by default. The repo includes
-`pnpm-workspace.yaml` with `allowBuilds: { esbuild: true, sharp: true }` to
-opt those in — if you see this error, you're probably on pnpm 9 or earlier
-and missed the `corepack enable` step. Fix:
+`pnpm-workspace.yaml` with an `allowBuilds` mapping that opts in `esbuild`
+and `sharp`:
+
+```yaml
+allowBuilds:
+  esbuild: true
+  sharp: true
+```
+
+If you see this error, the workspace file probably wasn't copied or you're
+on a tooling chain that ignores it. Fix:
 
 ```bash
 corepack enable
